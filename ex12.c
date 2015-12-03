@@ -28,6 +28,9 @@ typedef struct st_automato
 
 int main(void)
 {
+    petri petri;
+    inserirlista(&petri);
+    desenhaauto(petri);
     return EXIT_SUCCESS;
 }
 
