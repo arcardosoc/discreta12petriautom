@@ -4,9 +4,6 @@
 #include <pthread.h>
 #include <allegro.h>
 
-void inserirlista(petri **pet);
-void desenhaauto(petri *pet);
-void pthreadpetri(void);
 typedef struct st_fim
 {
     int tf;
@@ -20,26 +17,30 @@ typedef struct st_transicao
 }transicao;
 
 typedef struct st_petri
-{ 
+{
     int k, alf, si;
     fim lfim;
     transicao trans;
-}petri;
+}p;
+
+void inserirlista(p **pet);
+void desenhaauto(p *pet);
+void pthreadpetri(void);
 
 int main(void)
 {
-    petri pet;
+    p *pet=NULL;
     inserirlista(&pet);
     desenhaauto(pet);
     return EXIT_SUCCESS;
 }
 
-void inserirlista(petri **pet)
+void inserirlista(p **pet)
 {
     ;
 }
 
-void desenhaauto(petri *pet)
+void desenhaauto(p *pet)
 {
     ;
 }
