@@ -4,28 +4,34 @@
 #include <pthread.h>
 #include <allegro.h>
 
-typedef struct st_fim
+typedef struct st_lugartransicao
 {
-    int tf;
-    struct st_fim *prox;
-}fim;
+    int li, tf;
+    struct st_lugartransicao *prox;
+}lugartransicao;
+typedef struct st_transicaolugar
+{
+    int lf, ti;
+    struct st_transicaolugar *prox;
+}transicaolugar;
 
-typedef struct st_transicao
+typedef struct st_lugartoken
 {
-    int de,meio,para;
-    struct st_transicao *prox;
-}transicao;
+    int lu,tk;
+    struct st_lugartoken *prox;
+}lugartoken;
 
 typedef struct st_petri
 {
-    int k, alf, si;
-    fim lfim;
-    transicao trans;
+    int ql, qt, qk, al, at;
+    lugartoken lntk;
+    lugartransicao lutra;
+    transicaolugar tralu;
 }p;
 
 void inserirlista(p **pet);
 void desenhaauto(p *pet);
-void pthreadpetri(void);
+void simupetri(void);
 
 int main(void)
 {
