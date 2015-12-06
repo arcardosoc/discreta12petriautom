@@ -5,16 +5,17 @@
 #include <allegro.h>
 
 #define FNAME "entrada-petri-1.txt"
+#define VAZIO 0
 
 typedef struct st_lugartransicao
 {
-    int li, tf;
+    int li, tf, tkp;
     struct st_lugartransicao *prox;
 }lugartransicao;
 
 typedef struct st_transicaolugar
 {
-    int lf, ti;
+    int lf, ti, tkg;
     struct st_transicaolugar *prox;
 }transicaolugar;
 
@@ -40,7 +41,7 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu);
 
 int main(void)
 {
-    int i,lu,trans,tk;
+    int i,k,lu,trans,tk;
     FILE *fl= fopen(FNAME,"r+");
     lugartoken *pt = NULL;
     lugartransicao *plt = NULL;
@@ -54,12 +55,22 @@ int main(void)
     fscanf(fl,"%d",&(p.qk));
     fscanf(fl,"%d",&(p.al));
     fscanf(fl,"%d",&(p.at));
-    for(i=0;i<p.qk;i++)
+    for(i = 0;i < p.qk;i++)
     {
         fscanf(fl,"%d %d",&lu,&tk);
-        pt = &(p.lntk);
-        inserirlutk(&pt,lu,tk);
+        for(trans = k; trans < p.ql ;trans++)
+        {
+            pt = &(p.lntk);
+            if(i == lu)
+                inserirlutk(&pt,i,tk);
+            inserirlutk(&pt,i,VAZIO);
+        }
+        k = trans+1;
+       
     }
+    if(k < p.ql)
+        for(i = k;i < p.ql; i++)
+            inserirlutk(&pt,i,VAZIO);
     for(i=0;i<p.al;i++)
     {
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
@@ -89,15 +100,65 @@ void simupetri(void)
 
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
-    ;
+    lugartoken *pl = *cabeca;
+    lugartoken *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(lugartoken));
+    pl->lu = lu;
+    pl->tk = tk;
+    pl->prox = NULL;
+    if(plant != NULL)
+        plant->prox = pl;
+    else
+        *cabeca = pl;
+
+    return;
 }
 
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans)
 {
-    ;
+    lugartransicao *pl = *cabeca;
+    lugartransicao *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(lugartransicao));
+    pl->li = lu ;
+    pl->tkp = tk;
+    pl->tf = trans;
+    pl->prox = NULL;
+    if(plant != NULL)
+        plant->prox = pl;
+    else
+        *cabeca = pl;
+
+    return;
 }
 
 void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 {
-    ;
+    transicaolugar *pl = *cabeca;
+    transicaolugar *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(transicaolugar));
+    pl->ti = trans;
+    pl->tkg = tk;
+    pl->lf = lu;
+    pl->prox = NULL;
+    if(plant != NULL)
+        plant->prox = pl;
+    else
+        *cabeca = pl;
+
+    return;
 }
