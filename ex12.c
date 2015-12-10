@@ -41,9 +41,9 @@ typedef struct st_lugartoken
 typedef struct st_petri
 {
     int ql, qt, qk, al, at,key;
-    lugartoken lntk;
-    lugartransicao lutra;
-    transicaolugar tralu;
+    lugartoken *lntk;
+    lugartransicao *lutra;
+    transicaolugar *tralu;
 }petri;
 
 void desenhaauto(void);
@@ -65,23 +65,26 @@ int main(void)
     transicaolugar *ptl = NULL;
     petri *p = malloc(sizeof(petri));
     pthread_t pthread[NMAX];
-    printf("%d\n",p->lutra.tkp);
     srand(time(NULL));
+    p->lntk  = NULL;
+    p->lutra = NULL;
+    p->tralu = NULL;
     fscanf(fl,"%d",&(p->ql));
     fscanf(fl,"%d",&(p->qt));
     fscanf(fl,"%d",&(p->qk));
     fscanf(fl,"%d",&(p->al));
     fscanf(fl,"%d",&(p->at));
+    ptl = p->tralu;
+    pt = p->lntk;
+    plt = p->lutra;
     printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\n",p->ql,p->qt);
     if(DEBUG > 0)
         printf("Quantidade de Lugares com Tokens:%d\n Quantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",p->qk,p->al,p->at);
-    desenhaauto();
     for(i = 0;i < p->qk;i++)
     {
         fscanf(fl,"%d %d",&lu,&tk);
         for(trans = k; trans < p->ql ;trans++)
         {
-            pt = &(p->lntk);
             if(trans == lu)
             {
                 if(DEBUG > 0)
@@ -104,7 +107,6 @@ int main(void)
         {
             if(DEBUG > 0)
                 printf("Lugar:%d/Tokens:0\n",i);
-            pt = &(p->lntk);
             inserirlutk(&pt,i,VAZIO);
         }
     for(i=0;i<p->al;i++)
@@ -112,7 +114,6 @@ int main(void)
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
         if(DEBUG > 0)
             printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);
-        plt = &(p->lutra);
         inserirlutra(&plt,lu,tk,trans,i);
     }
     for(i=0;i<p->at;i++)
@@ -120,13 +121,12 @@ int main(void)
         fscanf(fl,"%d %d %d",&trans,&tk,&lu);
         if(DEBUG > 0)
             printf("Transicao:%d---Tokens Ganhos:%d--->Lugar:%d\n",trans,tk,lu);
-        ptl = &(p->tralu);
         inserirtralu(&ptl,trans,tk,lu);
     }
+    desenhaauto();
     printf("|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
-        adicionai(&p,i);
         if(pthread_create(&pthread[i], NULL, simupetri, (void *)p))
         {
             printf("\nFalha ao criar thread!");
@@ -134,7 +134,6 @@ int main(void)
         }
         if(DEBUG > 1)
             printf("Pthread[%d]: Criado com Sucesso\n",i);
-        sleep(1);
     }
     for(i = 0;i < p->al;i++)
     {
@@ -147,13 +146,6 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-void adicionai(petri **cabeca,int i)
-{
-    petri *pl=*cabeca;
-    pl->key=i;
-    return;
-}
-
 void desenhaauto(void)
 {
     ;
@@ -163,20 +155,13 @@ void *simupetri(void *p)
 {
     int k,flag;
     petri *ptemp = (petri *)p;
-    lugartoken *pt = NULL;
-    lugartransicao *plt = NULL;
-    transicaolugar *ptl = NULL;
-    plt=&(ptemp->lutra);
-    ptl=&(ptemp->tralu);
-    pt=&(ptemp->lntk);
-    while(plt->key != ptemp->key)
-        plt=plt->prox;
-    if(DEBUG > 2)
-        printf("Pthread[%d]/Key:%d\n",ptemp->key,plt->key);
+    lugartoken *pt = ptemp->lntk;
+    lugartransicao *plt = ptemp->lutra;
+    transicaolugar *ptl = ptemp->tralu;
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
-            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",plt->key,k);
+            printf("Interacao[%d]:retirada de token\n",k);
         flag=retiratoken(&pt,plt->li,plt->tkp);
         if(rand()%100+1 < PAT && flag)
         {
