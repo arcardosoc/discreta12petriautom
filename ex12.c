@@ -12,7 +12,7 @@
 #define Ytela 800
 
 #ifndef NMAX
-#define NMAX 3
+#define NMAX 1000
 #endif
 
 #ifndef PAT
@@ -174,13 +174,9 @@ int main(void)
 
 void *simupetri(void *i)
 {
-    int k,flag,key =*((int *)i);
-    printf("key:%d\n",key);
-    while(p->lutra->key != key)
-    {
+    int k,flag,key = *((int *)i);
+    while(p->lutra->key != key && p != NULL)
         p->lutra = p->lutra->prox;
-        printf("p->lutra:%d//key:%d\n",p->lutra->key,key);
-    }
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
