@@ -12,7 +12,7 @@
 #define Ytela 800
 
 #ifndef NMAX
-#define NMAX 1000
+#define NMAX 3
 #endif
 
 #ifndef PAT
@@ -49,8 +49,9 @@ typedef struct st_petri
     transicaolugar *tralu;
 }petri;
 
+static struct st_petri *p = NULL;
 void desenhaauto(petri p);
-void *simupetri(void *p);
+void *simupetri(void *i);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key);
 void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu);
@@ -63,8 +64,8 @@ int main(void)
 {
     int i,k=0,lu,trans,tk;
     FILE *fl= fopen(FNAME,"r+");
-    petri *p = malloc(sizeof(petri));
     pthread_t pthread[NMAX];
+    p = malloc(sizeof(petri));
     srand(time(NULL));
     p->lntk  = NULL;
     p->lutra = NULL;
@@ -74,9 +75,7 @@ int main(void)
     fscanf(fl,"%d",&(p->qk));
     fscanf(fl,"%d",&(p->al));
     fscanf(fl,"%d",&(p->at));
-    printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\n",p->ql,p->qt);
-    if(DEBUG > 0)
-        printf("Quantidade de Lugares com Tokens:%d\n Quantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",p->qk,p->al,p->at);
+    printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\nQuantidade de Lugares com Tokens:%d\nQuantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",p->ql,p->qt,p->qk,p->al,p->at);
     for(i = 0;i < p->qk;i++)
     {
         fscanf(fl,"%d %d",&lu,&tk);
@@ -121,76 +120,79 @@ int main(void)
         inserirtralu(&p->tralu,trans,tk,lu);
     }
     //desenhaauto(*p);
-    printf("|============INICIO SIMULACAO============|\n");
+    printf("\n|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
-        if(pthread_create(&pthread[i], NULL, simupetri, (void *)p))
+        if(pthread_create(&pthread[i], NULL, simupetri, (void *)&i))
         {
             printf("\nFalha ao criar thread!");
             return -1;
         }
-        if(DEBUG > 1)
-            printf("Pthread[%d]: Criado com Sucesso\n",i);
+        printf("Pthread[%d]: Criado com Sucesso\n",i);
     }
     for(i = 0;i < p->al;i++)
     {
         pthread_join(pthread[i],NULL);
-        if(DEBUG > 1)
-            printf("Pthread[%d]: Fechado com Sucesso\n",i);
+        printf("Pthread[%d]: Fechado com Sucesso\n",i);
     }
-    printf("|============FIM DA SIMULACAO============|\n");
+    printf("|============FIM DA SIMULACAO============|\n\n");
     fclose(fl);
     return EXIT_SUCCESS;
 }
 
 /*void desenhaauto(petri p)
-{
-    int i;
-    float rc,yi,xi,xc,yc;
-    rc=5;
-    yi=20;
-    xi=30;
-    BITMAP *img;
-    PALETTE pal;
-    if(allegro_init() !=0)
-        exit(1);
-    set_color_depth(16);
-    get_palette(pal);
-    img = create_bitmap(Xtela,Ytela);
-    if(img == (NULL))
-    {
-        printf("Nao pode criar a imagem");
-        exit(1);
-    }
-    for(i=0; i < p.ql; i++)
-    {
-        yc=yi+rc*sin(((2*M_PI)/p.ql)*i);
-        xc=xi+rc*cos(((2*M_PI)/p.ql)*i);
-    }
+  {
+  int i;
+  float rc,yi,xi,xc,yc;
+  rc=5;
+  yi=20;
+  xi=30;
+  BITMAP *img;
+  PALETTE pal;
+  if(allegro_init() !=0)
+  exit(1);
+  set_color_depth(16);
+  get_palette(pal);
+  img = create_bitmap(Xtela,Ytela);
+  if(img == (NULL))
+  {
+  printf("Nao pode criar a imagem");
+  exit(1);
+  }
+  for(i=0; i < p.ql; i++)
+  {
+  yc=yi+rc*sin(((2*M_PI)/p.ql)*i);
+  xc=xi+rc*cos(((2*M_PI)/p.ql)*i);
+  }
 
-    save_bitmap("petri.bmp",img,pal);
-    destroy_bitmap(img);
-    allegro_exit();
-    return ;
-    ;
-}*/
+  save_bitmap("petri.bmp",img,pal);
+  destroy_bitmap(img);
+  allegro_exit();
+  return ;
+  ;
+  }*/
 
-void *simupetri(void *p)
+void *simupetri(void *i)
 {
-    int k,flag;
-    petri *ptemp = (petri *)p;
+    int k,flag,key =*((int *)i);
+    printf("key:%d\n",key);
+    while(p->lutra->key != key)
+    {
+        p->lutra = p->lutra->prox;
+        printf("p->lutra:%d//key:%d\n",p->lutra->key,key);
+    }
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
-            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",ptemp->lutra->key,k);
-        flag=retiratoken(&ptemp->lntk,ptemp->lutra->li,ptemp->lutra->tkp);
+            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",p->lutra->key,k);
+        flag=retiratoken(&p->lntk,p->lutra->li,p->lutra->tkp);
         if(DEBUG > 4 && !flag)
             printf("Nao houve retirada de token\n");
         if(rand()%100+1 < PAT && flag)
         {
             if(DEBUG > 4)
-                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",ptemp->lutra->key,k);
-            ativacaotransicao(ptemp->tralu,ptemp->lntk,ptemp->lutra->tf);
+                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",p->lutra->key,k);
+            ativacaotransicao(p->tralu,p->lntk,p->lutra->tf);
         }
     }
     pthread_exit(0);
