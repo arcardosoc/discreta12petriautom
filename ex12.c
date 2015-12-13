@@ -43,7 +43,7 @@ typedef struct st_lugartoken
 
 typedef struct st_petri
 {
-    int ql, qt, qk, al, at,key;
+    int ql, qt, qk, al, at;
     lugartoken *lntk;
     lugartransicao *lutra;
     transicaolugar *tralu;
@@ -53,7 +53,7 @@ static struct st_petri *p = NULL;
 void desenhaauto(petri p);
 void *simupetri(void *i);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
-void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key);
+void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans);
 void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu);
 void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti);
 int retiratoken(lugartoken **cabeca, int lu, int tk);
@@ -110,7 +110,7 @@ int main(void)
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
         if(DEBUG > 0)
             printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);
-        inserirlutra(&p->lutra,lu,tk,trans,i);
+        inserirlutra(&p->lutra,lu,tk,trans);
     }
     for(i=0;i<p->at;i++)
     {
@@ -175,12 +175,13 @@ int main(void)
 void *simupetri(void *i)
 {
     int k,flag,key = *((int *)i);
-    while(p->lutra->key != key && p != NULL)
+    printf("key:%d\n",key);
+    while(p->lutra->li < key)
         p->lutra = p->lutra->prox;
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
-            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",p->lutra->key,k);
+            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",p->lutra->li,k);
         flag=retiratoken(&p->lntk,p->lutra->li,p->lutra->tkp);
         if(DEBUG > 4 && !flag)
             printf("Nao houve retirada de token\n");
@@ -271,7 +272,7 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
     return;
 }
 
-void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key)
+void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans)
 {
     lugartransicao *pl = *cabeca;
     lugartransicao *plant = NULL;
@@ -284,9 +285,8 @@ void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key)
     pl->li = lu ;
     pl->tkp = tk;
     pl->tf = trans;
-    pl->key = key;
     if(DEBUG > 2)
-        printf("Pl->li:%d\nPl->tkp:%d\nPl->tf:%d\nPl->key:%d\n",pl->li,pl->tkp,pl->tf,pl->key);
+        printf("Pl->li:%d\nPl->tkp:%d\nPl->tf:%d\n",pl->li,pl->tkp,pl->tf);
     pl->prox = NULL;
     if(plant != NULL)
         plant->prox = pl;
