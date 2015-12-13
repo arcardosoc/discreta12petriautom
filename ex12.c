@@ -9,10 +9,10 @@
 #define FNAME "entrada-petri-1.txt"
 #define VAZIO 0
 #define Xtela 800
-#define Ytela 600
+#define Ytela 800
 
 #ifndef NMAX
-#define NMAX 5
+#define NMAX 1000
 #endif
 
 #ifndef PAT
@@ -20,7 +20,7 @@
 #endif
 
 #ifndef DEBUG
-#define DEBUG 5
+#define DEBUG 0
 #endif
 
 typedef struct st_lugartransicao
@@ -182,7 +182,7 @@ void *simupetri(void *p)
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
-            printf("Interacao[%d]:retirada de token\n",k);
+            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",ptemp->lutra->key,k);
         flag=retiratoken(&ptemp->lntk,ptemp->lutra->li,ptemp->lutra->tkp);
         if(DEBUG > 4 && !flag)
             printf("Nao houve retirada de token\n");
@@ -266,15 +266,9 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
         printf("Pl->lu:%d\nPl->tk:%d\n",pl->lu,pl->tk);
     pl->prox = NULL;
     if(plant != NULL)
-    {
         plant->prox = pl;
-        printf("Linkando lntk\n");
-    }
     else
-    {
         *cabeca = pl;
-        printf("Aqui a cabeça lntk\n");
-    }
 
     return;
 }
@@ -297,15 +291,9 @@ void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key)
         printf("Pl->li:%d\nPl->tkp:%d\nPl->tf:%d\nPl->key:%d\n",pl->li,pl->tkp,pl->tf,pl->key);
     pl->prox = NULL;
     if(plant != NULL)
-    {
         plant->prox = pl;
-        printf("Linkando lutra\n");
-    }
     else
-    {
         *cabeca = pl;
-        printf("Aqui a cabeça lutra\n");
-    }
 
     return;
 }
@@ -327,15 +315,9 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
         printf("Pl->ti:%d\nPl->tkg:%d\nPl->lf:%d\n",pl->ti,pl->tkg,pl->lf);
     pl->prox = NULL;
     if(plant != NULL)
-    {
         plant->prox = pl;
-        printf("Linkando tralu\n");
-    }
     else
-    {
         *cabeca = pl;
-        printf("Aqui a cabeça tralu\n");
-    }
 
     return;
 }
