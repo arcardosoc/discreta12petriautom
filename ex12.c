@@ -7,6 +7,8 @@
 
 #define FNAME "entrada-petri-1.txt"
 #define VAZIO 0
+#define Xtela 800
+#define Ytela 600
 
 #ifndef NMAX
 #define NMAX 5
@@ -148,6 +150,18 @@ int main(void)
 
 void desenhaauto(petri p)
 {
+    int i;
+    float rc,yi,xi,xc,yc;
+    rc=5;
+    yi=20;
+    xi=30;
+    BITMAP *img;
+    PALETTE pal;
+    if(allegro_init() !=0)
+        exit(1);
+    set_color_depth(16);
+    get_palette(pal);
+    img = create_bitmap(Xtela,Ytela);
     ;
 }
 
