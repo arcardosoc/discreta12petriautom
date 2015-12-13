@@ -63,9 +63,6 @@ int main(void)
 {
     int i,k=0,lu,trans,tk;
     FILE *fl= fopen(FNAME,"r+");
-    lugartoken *pt = NULL;
-    lugartransicao *plt = NULL;
-    transicaolugar *ptl = NULL;
     petri *p = malloc(sizeof(petri));
     pthread_t pthread[NMAX];
     srand(time(NULL));
@@ -77,9 +74,6 @@ int main(void)
     fscanf(fl,"%d",&(p->qk));
     fscanf(fl,"%d",&(p->al));
     fscanf(fl,"%d",&(p->at));
-    ptl = p->tralu;
-    pt = p->lntk;
-    plt = p->lutra;
     printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\n",p->ql,p->qt);
     if(DEBUG > 0)
         printf("Quantidade de Lugares com Tokens:%d\n Quantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",p->qk,p->al,p->at);
@@ -92,14 +86,14 @@ int main(void)
             {
                 if(DEBUG > 0)
                     printf("Lugar:%d/Tokens:%d\n",lu,tk);
-                inserirlutk(&pt,lu,tk);
+                inserirlutk(&p->lntk,lu,tk);
                 break;
             }
             else
             {
                 if(DEBUG > 0)
                     printf("Lugar:%d/Tokens:0\n",trans);
-                inserirlutk(&pt,trans,VAZIO);
+                inserirlutk(&p->lntk,trans,VAZIO);
             }
         }
         k = trans+1;
@@ -110,23 +104,23 @@ int main(void)
         {
             if(DEBUG > 0)
                 printf("Lugar:%d/Tokens:0\n",i);
-            inserirlutk(&pt,i,VAZIO);
+            inserirlutk(&p->lntk,i,VAZIO);
         }
     for(i=0;i<p->al;i++)
     {
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
         if(DEBUG > 0)
             printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);
-        inserirlutra(&plt,lu,tk,trans,i);
+        inserirlutra(&p->lutra,lu,tk,trans,i);
     }
     for(i=0;i<p->at;i++)
     {
         fscanf(fl,"%d %d %d",&trans,&tk,&lu);
         if(DEBUG > 0)
             printf("Transicao:%d---Tokens Ganhos:%d--->Lugar:%d\n",trans,tk,lu);
-        inserirtralu(&ptl,trans,tk,lu);
+        inserirtralu(&p->tralu,trans,tk,lu);
     }
-    desenhaauto(*p);
+    //desenhaauto(*p);
     printf("|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
@@ -149,7 +143,7 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-void desenhaauto(petri p)
+/*void desenhaauto(petri p)
 {
     int i;
     float rc,yi,xi,xc,yc;
@@ -163,7 +157,7 @@ void desenhaauto(petri p)
     set_color_depth(16);
     get_palette(pal);
     img = create_bitmap(Xtela,Ytela);
-    if(img= (NULL))
+    if(img == (NULL))
     {
         printf("Nao pode criar a imagem");
         exit(1);
@@ -179,25 +173,24 @@ void desenhaauto(petri p)
     allegro_exit();
     return ;
     ;
-}
+}*/
 
 void *simupetri(void *p)
 {
     int k,flag;
     petri *ptemp = (petri *)p;
-    lugartoken *pt = ptemp->lntk;
-    lugartransicao *plt = ptemp->lutra;
-    transicaolugar *ptl = ptemp->tralu;
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
             printf("Interacao[%d]:retirada de token\n",k);
-        flag=retiratoken(&pt,plt->li,plt->tkp);
+        flag=retiratoken(&ptemp->lntk,ptemp->lutra->li,ptemp->lutra->tkp);
+        if(DEBUG > 4 && !flag)
+            printf("Nao houve retirada de token\n");
         if(rand()%100+1 < PAT && flag)
         {
             if(DEBUG > 4)
-                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",plt->key,k);
-            ativacaotransicao(ptl,pt,plt->tf);
+                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",ptemp->lutra->key,k);
+            ativacaotransicao(ptemp->tralu,ptemp->lntk,ptemp->lutra->tf);
         }
     }
     pthread_exit(0);
@@ -273,9 +266,15 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
         printf("Pl->lu:%d\nPl->tk:%d\n",pl->lu,pl->tk);
     pl->prox = NULL;
     if(plant != NULL)
+    {
         plant->prox = pl;
+        printf("Linkando lntk\n");
+    }
     else
+    {
         *cabeca = pl;
+        printf("Aqui a cabeça lntk\n");
+    }
 
     return;
 }
@@ -298,9 +297,15 @@ void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key)
         printf("Pl->li:%d\nPl->tkp:%d\nPl->tf:%d\nPl->key:%d\n",pl->li,pl->tkp,pl->tf,pl->key);
     pl->prox = NULL;
     if(plant != NULL)
+    {
         plant->prox = pl;
+        printf("Linkando lutra\n");
+    }
     else
+    {
         *cabeca = pl;
+        printf("Aqui a cabeça lutra\n");
+    }
 
     return;
 }
@@ -322,9 +327,15 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
         printf("Pl->ti:%d\nPl->tkg:%d\nPl->lf:%d\n",pl->ti,pl->tkg,pl->lf);
     pl->prox = NULL;
     if(plant != NULL)
+    {
         plant->prox = pl;
+        printf("Linkando tralu\n");
+    }
     else
+    {
         *cabeca = pl;
+        printf("Aqui a cabeça tralu\n");
+    }
 
     return;
 }
