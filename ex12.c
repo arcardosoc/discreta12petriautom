@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <allegro.h>
 #include <time.h>
+#include <math.h>
 
 #define FNAME "entrada-petri-1.txt"
 #define VAZIO 0
@@ -162,6 +163,21 @@ void desenhaauto(petri p)
     set_color_depth(16);
     get_palette(pal);
     img = create_bitmap(Xtela,Ytela);
+    if(img= (NULL))
+    {
+        printf("Nao pode criar a imagem");
+        exit(1);
+    }
+    for(i=0; i < p.ql; i++)
+    {
+        yc=yi+rc*sin(((2*M_PI)/p.ql)*i);
+        xc=xi+rc*cos(((2*M_PI)/p.ql)*i);
+    }
+
+    save_bitmap("petri.bmp",img,pal);
+    destroy_bitmap(img);
+    allegro_exit();
+    return ;
     ;
 }
 
