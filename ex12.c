@@ -46,7 +46,7 @@ typedef struct st_petri
     transicaolugar *tralu;
 }petri;
 
-void desenhaauto(void);
+void desenhaauto(petri p);
 void *simupetri(void *p);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans,int key);
@@ -123,7 +123,7 @@ int main(void)
             printf("Transicao:%d---Tokens Ganhos:%d--->Lugar:%d\n",trans,tk,lu);
         inserirtralu(&ptl,trans,tk,lu);
     }
-    desenhaauto();
+    desenhaauto(*p);
     printf("|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
@@ -146,7 +146,7 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-void desenhaauto(void)
+void desenhaauto(petri p)
 {
     ;
 }
