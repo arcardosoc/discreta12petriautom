@@ -329,7 +329,20 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 
 void desenha_estados(BITMAP buff, int k)
 {
-    ;
+    int i;
+    float raio,xi,yi,rc;
+    raio= (Y/8) * (M_PI/(M_PI+k));
+    rc = YCentro - raio*4;
+    if(DEBUG)
+        printf("Iniciando o desenho dos estados\n");
+    for(i=0;i<k;i++)
+    {
+        yi=YCentro+rc*cos((2*M_PI/k)*i);
+        xi=XCentro+rc*sin((2*M_PI/k)*i);
+        circle(buff, xi, yi, raio, CORAZUL);
+        textprintf_ex(buff, funt, (xi-18), (yi-5), CORVERDE, CORPRETO, "Est %d",i);
+    }
+    return;
 }
 
 void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
