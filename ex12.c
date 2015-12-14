@@ -347,7 +347,12 @@ void desenha_estados(BITMAP buff, int k)
 
 void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
 {
-    ;
+    int i, l=0, j=1;
+    float xi,yi,rc,raio;
+    transicaolugar *pl=trans;
+    raio = (Y/8)*(M_PI/(M_PI+k));
+    rc = YCentro - raio*4;
+    raio = (Y/12)*(M_PI/(M_PI+k));
 }
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
