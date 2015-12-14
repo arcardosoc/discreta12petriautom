@@ -60,7 +60,6 @@ typedef struct st_petri
 }petri;
 
 static struct st_petri *p = NULL;
-void desenhaauto(petri p);
 void *simupetri(void *i);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans);
@@ -69,6 +68,11 @@ void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti);
 int retiratoken(lugartoken **cabeca, int lu, int tk);
 void addtoken(lugartoken **cabeca, int lu, int tk);
 void adicionai(petri **cabeca,int i);
+void gerar_imagem(petri p);
+void desenha_estados(BITMAP buff, int k);
+void desenha_transicoes(BITMAP buff, transicaolugar *trans, int k, int c);
+void desenha_arcos(int qo, int qf, BITMAP buff, int k, int c, int flag);
+float arctan(float x1, float y1, float x2, float y2);
 
 int main(void)
 {
@@ -129,7 +133,7 @@ int main(void)
             printf("Transicao:%d---Tokens Ganhos:%d--->Lugar:%d\n",trans,tk,lu);
         inserirtralu(&p->tralu,trans,tk,lu);
     }
-    //desenhaauto(*p);
+    //gerar_imagem(*p);
     printf("\n|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
@@ -150,36 +154,9 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-/*void desenhaauto(petri p)
-  {
-  int i;
-  float rc,yi,xi,xc,yc;
-  rc=5;
-  yi=20;
-  xi=30;
-  BITMAP *img;
-  PALETTE pal;
-  if(allegro_init() !=0)
-  exit(1);
-  set_color_depth(16);
-  get_palette(pal);
-  img = create_bitmap(Xtela,Ytela);
-  if(img == (NULL))
-  {
-  printf("Nao pode criar a imagem");
-  exit(1);
-  }
-  for(i=0; i < p.ql; i++)
-  {
-  yc=yi+rc*sin(((2*M_PI)/p.ql)*i);
-  xc=xi+rc*cos(((2*M_PI)/p.ql)*i);
-  }
-
-  save_bitmap("petri.bmp",img,pal);
-  destroy_bitmap(img);
-  allegro_exit();
-  return ;
-  ;
+/*void gerar_imagem(petri *p)
+  { 
+      ;
   }*/
 
 void *simupetri(void *i)
@@ -329,3 +306,25 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 
     return;
 }
+
+void desenha_estados(BITMAP buff, int k)
+{
+    ;
+}
+
+void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
+{
+    ;
+}
+
+void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
+{
+    ;
+}
+
+float arctan(float x1, float y1, float x2, float y2)
+{
+    ;
+}
+
+
