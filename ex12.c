@@ -8,8 +8,18 @@
 
 #define FNAME "entrada-petri-1.txt"
 #define VAZIO 0
-#define Xtela 800
-#define Ytela 800
+#define X 800
+#define Y 600
+#define XCentro X/2.0
+#define YCentro Y/2.0
+#define IMAGENAME "ex12.bmp"
+#define CORBRANCO (makecol(255,255,255))
+#define CORPRETO 1
+#define CORCINZA (makecol(160,160,160))
+#define CORAZUL (makecol(0,0,255))
+#define CORVERDE (makecol(0,255,0))
+#define CORAMARELO (makecol(255,255,100))
+#define CORVERMELHO (makecol(255,0,0))
 
 #ifndef NMAX
 #define NMAX 1000
