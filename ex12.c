@@ -156,7 +156,27 @@ int main(void)
 
 /*void gerar_imagem(petri *p)
   { 
-      ;
+    BITMAP *buff;
+    PALETTE pal;
+    int k=1,flag;
+
+    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+        exit(EXIT_FAILURE);
+    set_color_depth(16);
+    get_palette(pal);
+
+    buff = create_bitmap(X,Y);
+    if(buff == NULL)
+    {
+        printf("Nao foi possivel criar a imagem!\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    save_bitmap(IMAGENAME, buff, pal);
+    destroy_bitmap(buff);
+    allegro_exit();
+
+    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
   }*/
 
 void *simupetri(void *i)
