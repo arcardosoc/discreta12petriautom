@@ -68,10 +68,10 @@ void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti);
 int retiratoken(lugartoken **cabeca, int lu, int tk);
 void addtoken(lugartoken **cabeca, int lu, int tk);
 void adicionai(petri **cabeca,int i);
-void gerar_imagem(petri p);
-void desenha_estados(BITMAP buff, int k);
-void desenha_transicoes(BITMAP buff, transicaolugar *trans, int k, int c);
-void desenha_arcos(int qo, int qf, BITMAP buff, int k, int c, int flag);
+void gerar_imagem(petri *p);
+void desenha_estados(BITMAP *buff, int k);
+void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k, int c);
+void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag);
 float arctan(float x1, float y1, float x2, float y2);
 
 int main(void)
