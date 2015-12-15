@@ -30,7 +30,7 @@
 #endif
 
 #ifndef DEBUG
-#define DEBUG 0
+#define DEBUG 5
 #endif
 
 typedef struct st_lugartransicao
@@ -144,7 +144,7 @@ int main(void)
     }
     //gerar_imagem(*p);
     printf("\n|============INICIO SIMULACAO============|\n");
-    for(i=0;i < p->al;i++)
+    for(i = 0;i < p->al;i++)
     {
         inserirvari(&d, i);
         if(pd->prox != NULL)
@@ -243,7 +243,7 @@ int retiratoken(lugartoken **cabeca, int lu, int tk)
                 printf("Tko:%d - ",pl->tk);
             pl->tk-=tk;
             if(DEBUG > 2)
-                printf("Tk:%d = Tkf:%d\n",tk,pl->tk);
+                printf("Tk:%d = Tkf:%d\n\n",tk,pl->tk);
             return 1;
         }
         pl=pl->prox;
