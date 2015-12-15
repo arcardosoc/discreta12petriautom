@@ -30,7 +30,7 @@
 #endif
 
 #ifndef DEBUG
-#define DEBUG 5
+#define DEBUG 0
 #endif
 
 typedef struct st_lugartransicao
@@ -86,10 +86,9 @@ int main(void)
     int i,k=0,lu,trans,tk;
     FILE *fl= fopen(FNAME,"r+");
     pthread_t pthread[NMAX];
-    variavel *d = NULL;
-    variavel *pd = NULL;
+    variavel *d = malloc(sizeof(variavel));
+    variavel *pd = d;
     p = malloc(sizeof(petri));
-    pd = d;
     srand(time(NULL));
     p->lntk  = NULL;
     p->lutra = NULL;
@@ -150,7 +149,7 @@ int main(void)
         inserirvari(&d, i);
         if(pd->prox != NULL)
             pd = pd->prox;
-        if(pthread_create(&pthread[i], NULL, simupetri, (void *)&pd))
+        if(pthread_create(&pthread[i], NULL, simupetri, (void *)pd))
         {
             printf("\nFalha ao criar thread!");
             return -1;
@@ -192,12 +191,14 @@ int main(void)
   printf("Imagem %s salva com sucesso!\n", IMAGENAME);
   }*/
 
-void *simupetri(void *i)
+void *simupetri(void *pdtemp)
 {
-    int k,flag,key = *((int *)i);
-    printf("key:%d\n",key);
-    while(p->lutra->li < key)
+    int k,flag;
+    variavel *pd = (variavel*) pdtemp;
+    while(p->lutra->li < pd->i)
         p->lutra = p->lutra->prox;
+    if(DEBUG>0)
+        printf("Pthread[%d]-key:%d\n",p->lutra->li,pd->i);
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
