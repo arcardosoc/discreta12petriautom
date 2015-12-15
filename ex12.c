@@ -353,6 +353,31 @@ void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
     raio = (Y/8)*(M_PI/(M_PI+k));
     rc = YCentro - raio*4;
     raio = (Y/12)*(M_PI/(M_PI+k));
+
+    while(1)
+    {
+        for(i=j;i<c*2;i++)
+        {
+            yi=YCentro+rc*cos((2*M_PI/(k*2))*i);
+            xi=XCentro+rc*sin((2*M_PI/(k*2))*i);
+            line(buff, (xi), (yi)+raio, (xi), (yi)-raio, CORVERMELHO);
+            if(M_PI/2<=(2*M_PI/(k*2))*i && (3*M_PI)/2>(2*M_PI/(k*2))*i)
+                textprintf_ex(buff, font, xi-10, yi-raio-12, CORVERDE, CORPRETO, "Tr%d",l++);
+            else
+            {
+                 textprintf_ex(buff, font, xi-10, yi+raio+5, CORVERDE, CORPRETO, "Tr%d",l++);
+                 break;
+            }
+            i++;
+        }
+        k = i+2;
+        if(pl->prox!=NULL)
+        {
+            pl=pl->prox;
+        }
+        else
+            break;
+    }
 }
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
