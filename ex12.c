@@ -166,32 +166,49 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-/*void gerar_imagem(petri *p)
-  { 
-  BITMAP *buff;
-  PALETTE pal;
-  int k=1,flag;
+void gerar_imagem(petri *p)
+{ 
+    BITMAP *buff;
+    PALETTE pal;
+    int k=1,flag;
 
-  if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-  exit(EXIT_FAILURE);
-  set_color_depth(16);
-  get_palette(pal);
+    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+    exit(EXIT_FAILURE);
+    set_color_depth(16);
+    get_palette(pal);
 
-  buff = create_bitmap(X,Y);
-  if(buff == NULL)
-  {
-  printf("Nao foi possivel criar a imagem!\n");
-  exit(EXIT_FAILURE);
+     buff = create_bitmap(X,Y);
+    if(buff == NULL)
+    {
+    printf("Nao foi possivel criar a imagem!\n");
+    exit(EXIT_FAILURE);
+    }
+    desenha_estados(buff,p->ql);
+    desenha_transicoes(buff, p->tralu,p->ql,p->qt);
+
+        flag=1;
+        while(p->lutra !=NULL)
+        {
+            desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
+            p->lutra=p->lutra->prox;
+            k++;
+
+        }
+        k=1;
+        flag=0;
+        while(p->tralu !=NULL )
+        {
+            desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
+            p->tralu=p->tralu->prox;
+            k++;
+        }
+
+    save_bitmap(IMAGENAME, buff, pal);
+    destroy_bitmap(buff);
+    allegro_exit();
+
+    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
   }
-  desenha_estados(buff,p->ql);
-  desenha_transicoes(buff, p->tralu,p->ql,p->qt);
-
-  save_bitmap(IMAGENAME, buff, pal);
-  destroy_bitmap(buff);
-  allegro_exit();
-
-  printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-  }*/
 
 void *simupetri(void *pdtemp)
 {
