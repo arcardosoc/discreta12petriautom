@@ -22,7 +22,7 @@
 #define CORVERMELHO (makecol(255,0,0))
 
 #ifndef NMAX
-#define NMAX 1000
+#define NMAX 3 
 #endif
 
 #ifndef PAT
@@ -30,7 +30,7 @@
 #endif
 
 #ifndef DEBUG
-#define DEBUG 0
+#define DEBUG 5
 #endif
 
 typedef struct st_lugartransicao
@@ -59,11 +59,18 @@ typedef struct st_petri
     transicaolugar *tralu;
 }petri;
 
+typedef struct st_variavel
+{
+    int i;
+    struct st_variavel *prox;
+}variavel;
+
 static struct st_petri *p = NULL;
 void *simupetri(void *i);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans);
 void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu);
+void inserirvari(variavel **cabeca,int i);
 void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti);
 int retiratoken(lugartoken **cabeca, int lu, int tk);
 void addtoken(lugartoken **cabeca, int lu, int tk);
@@ -79,7 +86,10 @@ int main(void)
     int i,k=0,lu,trans,tk;
     FILE *fl= fopen(FNAME,"r+");
     pthread_t pthread[NMAX];
+    variavel *d = NULL;
+    variavel *pd = NULL;
     p = malloc(sizeof(petri));
+    pd = d;
     srand(time(NULL));
     p->lntk  = NULL;
     p->lutra = NULL;
@@ -137,7 +147,10 @@ int main(void)
     printf("\n|============INICIO SIMULACAO============|\n");
     for(i=0;i < p->al;i++)
     {
-        if(pthread_create(&pthread[i], NULL, simupetri, (void *)&i))
+        inserirvari(&d, i);
+        if(pd->prox != NULL)
+            pd = pd->prox;
+        if(pthread_create(&pthread[i], NULL, simupetri, (void *)&pd))
         {
             printf("\nFalha ao criar thread!");
             return -1;
@@ -156,27 +169,27 @@ int main(void)
 
 /*void gerar_imagem(petri *p)
   { 
-    BITMAP *buff;
-    PALETTE pal;
-    int k=1,flag;
+  BITMAP *buff;
+  PALETTE pal;
+  int k=1,flag;
 
-    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-        exit(EXIT_FAILURE);
-    set_color_depth(16);
-    get_palette(pal);
+  if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+  exit(EXIT_FAILURE);
+  set_color_depth(16);
+  get_palette(pal);
 
-    buff = create_bitmap(X,Y);
-    if(buff == NULL)
-    {
-        printf("Nao foi possivel criar a imagem!\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    save_bitmap(IMAGENAME, buff, pal);
-    destroy_bitmap(buff);
-    allegro_exit();
+  buff = create_bitmap(X,Y);
+  if(buff == NULL)
+  {
+  printf("Nao foi possivel criar a imagem!\n");
+  exit(EXIT_FAILURE);
+  }
 
-    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
+  save_bitmap(IMAGENAME, buff, pal);
+  destroy_bitmap(buff);
+  allegro_exit();
+
+  printf("Imagem %s salva com sucesso!\n", IMAGENAME);
   }*/
 
 void *simupetri(void *i)
@@ -256,6 +269,26 @@ void addtoken(lugartoken **cabeca, int lu, int tk)
     return;
 }
 
+void inserirvari(variavel **cabeca,int i)
+{
+    variavel *pl = *cabeca;
+    variavel *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(variavel));
+    pl->i = i;
+    pl->prox = NULL;
+    if(plant != NULL)
+        plant->prox = pl;
+    else
+        *cabeca = pl;
+
+    return;
+}
+
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
     lugartoken *pl = *cabeca;
@@ -326,7 +359,7 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 
     return;
 }
-
+/*
 void desenha_estados(BITMAP buff, int k)
 {
     int i;
@@ -365,8 +398,8 @@ void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
                 textprintf_ex(buff, font, xi-10, yi-raio-12, CORVERDE, CORPRETO, "Tr%d",l++);
             else
             {
-                 textprintf_ex(buff, font, xi-10, yi+raio+5, CORVERDE, CORPRETO, "Tr%d",l++);
-                 break;
+                textprintf_ex(buff, font, xi-10, yi+raio+5, CORVERDE, CORPRETO, "Tr%d",l++);
+                break;
             }
             i++;
         }
@@ -390,4 +423,4 @@ float arctan(float x1, float y1, float x2, float y2)
     ;
 }
 
-
+*/
