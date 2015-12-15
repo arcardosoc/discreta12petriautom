@@ -360,7 +360,7 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 
     return;
 }
-/*
+
 void desenha_estados(BITMAP buff, int k)
 {
     int i;
@@ -416,7 +416,20 @@ void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
-    ;
+    float delta, alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
+    raio=(Y/8)*(M_PI/(M_PI+(k/2)));
+    rc = YCentro - raio*4;
+
+    y1 = YCentro + rc*cos((2*M_PI/k)*qo);
+    x1 = XCentro + rc*sin((2*M_PI/k)*qo);
+    y3 = YCentro + rc*cos((2*M_PI/k)*qf);
+    x3 = XCentro + rc*sin((2*M_PI/k)*qf);
+
+    alfa=arctan(x1,y1,x3,y3);
+    y2=(y3+y1)/2 + raio * cos(alfa);
+    x2=(x3+x1)/2 - raio * sin(alfa);
+  
+    
 }
 
 float arctan(float x1, float y1, float x2, float y2)
@@ -424,4 +437,4 @@ float arctan(float x1, float y1, float x2, float y2)
     ;
 }
 
-*/
+
