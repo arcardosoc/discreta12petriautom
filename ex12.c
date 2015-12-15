@@ -428,8 +428,58 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     alfa=arctan(x1,y1,x3,y3);
     y2=(y3+y1)/2 + raio * cos(alfa);
     x2=(x3+x1)/2 - raio * sin(alfa);
-  
-    
+
+    if(((alfa >= 0) && (alfa <= M_PI/2)) || ((alfa >= M_PI) && (alfa <= 3*M_PI/2)))
+    {
+        beta=arctan(x3,y3,x2,y2);
+        phi=arctan(x1,y1,x2,y2);
+        xo = x1 + raio * cos(phi);
+        yo = y1 + raio * sin(phi);
+        xf = x3 + raio * cos(beta);
+        yf = y3 + raio * sin(beta);
+    }
+    else
+    {
+        alfa=arctan(x3,y3,x1,y1);
+        y2=(y3+y1)/2 + raio * cos(alfa);
+        x2=(x3+x1)/2 - raio * sin(alfa);
+        beta=arctan(x1,y1,x2,y2);
+        phi=arctan(x3,y3,x2,y2);
+        if(flag)
+        {
+            xo = x1 - raio * cos(phi);
+            yo = y1 - raio * sin(phi);
+            xf = x3;
+            yf = y3;
+        }
+        else
+        {
+            xo = x1;
+            yo = y1;
+            xf = x3 - raio * cos(beta);
+            yf = y3 - raio * sin(beta);
+        }
+    }
+    int coo[8];
+    coo[0] = (int)xo;
+    coo[1] = (int)yo;
+    coo[2] = (int)x2;
+    coo[3] = (int)y2;
+    coo[4] = (int)x2;
+    coo[5] = (int)y2;
+    coo[6] = (int)xf;
+    coo[7] = (int)yf;
+    spline(buff,coo,CORBRANCO);
+
+    delta=arctan(x2,y2,x3,y3);
+    xt2 = xf - (raio / 4) * (sin(delta) + cos(delta));
+    yt2 = yf + (raio / 4) * (sin(delta) - cos(delta));
+    xt1 = xf + (raio / 4) * (sin(delta) - cos(delta));
+    yt1 = yf - (raio / 4) * (sin(delta) + cos(delta));
+
+    triangle(buff, xt1, yt1, xt2, yt2, xf, yf, CORBRANCO);
+    textprintf_ex(buff, font, x2, y2, CORVERDE, CORPRETO, "%d", c);
+      
 }
 
 float arctan(float x1, float y1, float x2, float y2)
