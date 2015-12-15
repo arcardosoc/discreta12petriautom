@@ -183,6 +183,8 @@ int main(void)
   printf("Nao foi possivel criar a imagem!\n");
   exit(EXIT_FAILURE);
   }
+  desenha_estados(buff,p->ql);
+  desenha_transicoes(buff, p->tralu,p->ql,p->qt);
 
   save_bitmap(IMAGENAME, buff, pal);
   destroy_bitmap(buff);
