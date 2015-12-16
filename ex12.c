@@ -239,11 +239,7 @@ int retiratoken(lugartoken **cabeca, int lu, int tk)
     {
         if(pl->lu == lu && pl->tk >= tk)
         {
-            if(DEBUG > 2)
-                printf("Tko:%d - ",pl->tk);
             pl->tk-=tk;
-            if(DEBUG > 2)
-                printf("Tk:%d = Tkf:%d\n\n",tk,pl->tk);
             return 1;
         }
         pl=pl->prox;
@@ -258,11 +254,7 @@ void addtoken(lugartoken **cabeca, int lu, int tk)
     {
         if(pl->lu == lu)
         {
-            if(DEBUG > 2)
-                printf("Tko:%d + ",pl->tk);
             pl->tk+=tk;
-            if(DEBUG > 2)
-                printf("Tk:%d = Tkf:%d\n",tk,pl->tk);
             break;
         }
         pl=pl->prox;
