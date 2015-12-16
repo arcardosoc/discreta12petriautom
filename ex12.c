@@ -166,30 +166,49 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-/*void gerar_imagem(petri *p)
-  { 
-  BITMAP *buff;
-  PALETTE pal;
-  int k=1,flag;
+void gerar_imagem(petri *p)
+{ 
+    BITMAP *buff;
+    PALETTE pal;
+    int k=1,flag;
 
-  if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-  exit(EXIT_FAILURE);
-  set_color_depth(16);
-  get_palette(pal);
+    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+    exit(EXIT_FAILURE);
+    set_color_depth(16);
+    get_palette(pal);
 
-  buff = create_bitmap(X,Y);
-  if(buff == NULL)
-  {
-  printf("Nao foi possivel criar a imagem!\n");
-  exit(EXIT_FAILURE);
+     buff = create_bitmap(X,Y);
+    if(buff == NULL)
+    {
+    printf("Nao foi possivel criar a imagem!\n");
+    exit(EXIT_FAILURE);
+    }
+    desenha_estados(buff,p->ql);
+    desenha_transicoes(buff, p->tralu,p->ql,p->qt);
+
+        flag=1;
+        while(p->lutra !=NULL)
+        {
+            desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
+            p->lutra=p->lutra->prox;
+            k++;
+
+        }
+        k=1;
+        flag=0;
+        while(p->tralu !=NULL )
+        {
+            desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
+            p->tralu=p->tralu->prox;
+            k++;
+        }
+
+    save_bitmap(IMAGENAME, buff, pal);
+    destroy_bitmap(buff);
+    allegro_exit();
+
+    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
   }
-
-  save_bitmap(IMAGENAME, buff, pal);
-  destroy_bitmap(buff);
-  allegro_exit();
-
-  printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-  }*/
 
 void *simupetri(void *pdtemp)
 {
@@ -352,7 +371,7 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 
     return;
 }
-/*
+
 void desenha_estados(BITMAP buff, int k)
 {
     int i;
@@ -408,12 +427,93 @@ void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
-    ;
+    float delta, alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
+    raio=(Y/8)*(M_PI/(M_PI+(k/2)));
+    rc = YCentro - raio*4;
+
+    y1 = YCentro + rc*cos((2*M_PI/k)*qo);
+    x1 = XCentro + rc*sin((2*M_PI/k)*qo);
+    y3 = YCentro + rc*cos((2*M_PI/k)*qf);
+    x3 = XCentro + rc*sin((2*M_PI/k)*qf);
+
+    alfa=arctan(x1,y1,x3,y3);
+    y2=(y3+y1)/2 + raio * cos(alfa);
+    x2=(x3+x1)/2 - raio * sin(alfa);
+
+    if(((alfa >= 0) && (alfa <= M_PI/2)) || ((alfa >= M_PI) && (alfa <= 3*M_PI/2)))
+    {
+        beta=arctan(x3,y3,x2,y2);
+        phi=arctan(x1,y1,x2,y2);
+        xo = x1 + raio * cos(phi);
+        yo = y1 + raio * sin(phi);
+        xf = x3 + raio * cos(beta);
+        yf = y3 + raio * sin(beta);
+    }
+    else
+    {
+        alfa=arctan(x3,y3,x1,y1);
+        y2=(y3+y1)/2 + raio * cos(alfa);
+        x2=(x3+x1)/2 - raio * sin(alfa);
+        beta=arctan(x1,y1,x2,y2);
+        phi=arctan(x3,y3,x2,y2);
+        if(flag)
+        {
+            xo = x1 - raio * cos(phi);
+            yo = y1 - raio * sin(phi);
+            xf = x3;
+            yf = y3;
+        }
+        else
+        {
+            xo = x1;
+            yo = y1;
+            xf = x3 - raio * cos(beta);
+            yf = y3 - raio * sin(beta);
+        }
+    }
+    int coo[8];
+    coo[0] = (int)xo;
+    coo[1] = (int)yo;
+    coo[2] = (int)x2;
+    coo[3] = (int)y2;
+    coo[4] = (int)x2;
+    coo[5] = (int)y2;
+    coo[6] = (int)xf;
+    coo[7] = (int)yf;
+    spline(buff,coo,CORBRANCO);
+
+    delta=arctan(x2,y2,x3,y3);
+    xt2 = xf - (raio / 4) * (sin(delta) + cos(delta));
+    yt2 = yf + (raio / 4) * (sin(delta) - cos(delta));
+    xt1 = xf + (raio / 4) * (sin(delta) - cos(delta));
+    yt1 = yf - (raio / 4) * (sin(delta) + cos(delta));
+
+    triangle(buff, xt1, yt1, xt2, yt2, xf, yf, CORBRANCO);
+    textprintf_ex(buff, font, x2, y2, CORVERDE, CORPRETO, "%d", c);
+      
 }
 
 float arctan(float x1, float y1, float x2, float y2)
 {
-    ;
+    if(x2 == x1)
+    {
+        if(y2 == y1)
+            return 9.0;
+        else
+            if(y2>y1)
+                return M_PI/2.0;
+         return 3.0*M_PI/2.0;
+    }
+    if((y2 == y1) && (x2 < x1))
+        return M_PI;
+    float a = atan(fabs(y2-y1)/fabs(x2-x1));
+    if((x2 < x1) && (y2 > y1)) // QUAD = 2
+        return a + M_PI/2.0;
+    if((x2 < x1) && (y2 < y1)) // QUAD = 3
+        return a + M_PI;
+    if((x2 > x1) && (y2 < y1)) // QUAD = 4
+        return a + 3.0*M_PI/2.0;
+     return a; // QUAD = 1
 }
 
-*/
+
