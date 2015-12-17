@@ -159,13 +159,13 @@ int main(void)
         pthread_join(pthread[i],NULL);
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
     }
-
-    while(p->lntk != NULL)
-    {
-        printf("Lugar:%d / tokens:%d\n",p->lntk->lu,p->lntk->tk);
-        p->lntk=p->lntk->prox;
-    }
-    printf("|============FIM DA SIMULACAO============|\n\n");
+if(DEBUG > 0)
+   while(lntk != NULL)
+           {
+                       printf("Lugar:%d / Tokens Finais:%d\n",lntk->lu,lntk->tk);
+                               lntk=lntk->prox;
+                                   }
+   printf("|============FIM DA SIMULACAO============|\n\n");
     fclose(fl);
     return EXIT_SUCCESS;
 }
