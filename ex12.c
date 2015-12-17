@@ -61,9 +61,9 @@ void inserirtransicao(transicao **cabeca, int i);
 void inserirentram(arco **cabeca,int inicio,int tkgp,int final);
 void ativacaotransicao(arco *head,lugartoken **cabeca);
 int retiratoken(lugartoken **cabeca, arco *head);
-void gerar_imagem(petri *p);
+//void gerar_imagem(petri *p);
 void desenha_estados(BITMAP *buff, int k);
-void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k, int c);
+//void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k, int c);
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag);
 float arctan(float x1, float y1, float x2, float y2);
 
@@ -170,7 +170,7 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-void gerar_imagem(petri *p)
+/*void gerar_imagem(petri *p)
 { 
     BITMAP *buff;
     PALETTE pal;
@@ -212,7 +212,7 @@ void gerar_imagem(petri *p)
     allegro_exit();
 
     printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-}
+}*/
 
 
 void *simupetri(void *trtemp)
@@ -229,7 +229,8 @@ void *simupetri(void *trtemp)
                 printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
             flag=retiratoken(&lntk,tr->entram);
             if(DEBUG > 4 && !flag)
-                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            if(rand()%100+1 < PAT && flag)
+                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
+            if(rand()%100+1 < PAT && flag)
                 {
                     if(DEBUG > 4)
                         printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
@@ -242,7 +243,7 @@ void *simupetri(void *trtemp)
     pthread_exit(0);
 }
 
-void ativacaotransiicao(arco *head,lugartoken **cabeca)
+void ativacaotransicao(arco *head,lugartoken **cabeca)
 {
     lugartoken *pl=*cabeca;
     arco *pt=head;
@@ -317,15 +318,9 @@ void inserirtransicao(transicao **cabeca,int i)
     pl->trans = i;
     pl->prox = NULL;
     if(plant != NULL)
-    {
-        printf("corpo\n");
         plant->prox = pl;
-    }
     else
-    {
-        printf("cabeça\n");
         *cabeca = pl;
-    }
 
     return;
 }
@@ -371,7 +366,7 @@ void desenha_estados(BITMAP *buff, int k)
     return;
 }
 
-void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
+/*void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
 {
     int i, l=0, j=1;
     float xi,yi,rc,raio;
@@ -404,7 +399,7 @@ void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
         else
             break;
     }
-}
+}*/
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
