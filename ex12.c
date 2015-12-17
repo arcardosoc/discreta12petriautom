@@ -54,7 +54,7 @@ typedef struct st_lugartoken
     struct st_lugartoken *prox;
 }lugartoken;
 
-static struct st_petri *p = NULL;
+static struct st_lugartoken *lntk;
 void *simupetri(void *i);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans);
