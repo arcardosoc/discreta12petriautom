@@ -242,23 +242,27 @@ void *simupetri(void *trtemp)
     pthread_exit(0);
 }
 
-void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti)
+void ativacaotransiicao(arco *head,lugartoken **cabeca)
 {
-    transicaolugar *pl=cabeca;
-    while(pl!=NULL)
+    lugartoken *pl=*cabeca;
+    arco *pt=head;
+    while(pt != NULL)
     {
-        if(pl->ti == ti)
+        while(pl != NULL)
         {
-            if(DEBUG > 4)
-                printf("Ativado Transicao:%d--->Lugar:%d\n",pl->ti,pl->lf);
-            addtoken(&pt,pl->lf,pl->tkg);
+            if(pt->final== pl->lu)
+            {
+                printf("pt->final:%d = pl->lu:%d\npl->tk:%d + pt->tkgp:%d\n",pt->final,pl->lu,pl->tk,pt->tkgp);
+                pl->tk+=pt->tkgp;
+            }
+            pl = pl->prox;
         }
-        pl=pl->prox;
+        pl=*cabeca;
+        pt=pt->prox;
     }
-    return;
+    return ;
 }
-
-int retiratoken(lugartoken **cabeca, int lu, int tk)
+retiratoken(lugartoken **cabeca, int lu, int tk)
 {
     lugartoken *pl=*cabeca;
     while(pl!=NULL)
