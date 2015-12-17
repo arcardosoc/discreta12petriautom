@@ -171,48 +171,48 @@ int main(void)
 }
 
 /*void gerar_imagem(petri *p)
-{ 
-    BITMAP *buff;
-    PALETTE pal;
-    int k=1,flag;
+  { 
+  BITMAP *buff;
+  PALETTE pal;
+  int k=1,flag;
 
-    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-        exit(EXIT_FAILURE);
-    set_color_depth(16);
-    get_palette(pal);
+  if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+  exit(EXIT_FAILURE);
+  set_color_depth(16);
+  get_palette(pal);
 
-    buff = create_bitmap(X,Y);
-    if(buff == NULL)
-    {
-        printf("Nao foi possivel criar a imagem!\n");
-        exit(EXIT_FAILURE);
-    }
-    desenha_estados(buff,p->ql);
-    desenha_transicoes(buff, p->tralu,p->ql,p->qt);
+  buff = create_bitmap(X,Y);
+  if(buff == NULL)
+  {
+  printf("Nao foi possivel criar a imagem!\n");
+  exit(EXIT_FAILURE);
+  }
+  desenha_estados(buff,p->ql);
+  desenha_transicoes(buff, p->tralu,p->ql,p->qt);
 
-    flag=1;
-    while(p->lutra !=NULL)
-    {
-        desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
-        p->lutra=p->lutra->prox;
-        k++;
+  flag=1;
+  while(p->lutra !=NULL)
+  {
+  desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
+  p->lutra=p->lutra->prox;
+  k++;
 
-    }
-    k=1;
-    flag=0;
-    while(p->tralu !=NULL )
-    {
-        desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
-        p->tralu=p->tralu->prox;
-        k++;
-    }
+  }
+  k=1;
+  flag=0;
+  while(p->tralu !=NULL )
+  {
+  desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
+  p->tralu=p->tralu->prox;
+  k++;
+  }
 
-    save_bitmap(IMAGENAME, buff, pal);
-    destroy_bitmap(buff);
-    allegro_exit();
+  save_bitmap(IMAGENAME, buff, pal);
+  destroy_bitmap(buff);
+  allegro_exit();
 
-    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-}*/
+  printf("Imagem %s salva com sucesso!\n", IMAGENAME);
+  }*/
 
 
 void *simupetri(void *trtemp)
@@ -223,22 +223,17 @@ void *simupetri(void *trtemp)
     printf("simupetri:%d\n",tr->trans);
     for(k = 0;k < NMAX;k++)
     {
-        while(tr->entram != NULL)
+        if(DEBUG > 4)
+            printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
+        flag=retiratoken(&lntk,tr->entram);
+        if(DEBUG > 4 && !flag)
+            printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
+        if(rand()%100+1 < PAT && flag)
         {
             if(DEBUG > 4)
-                printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
-            flag=retiratoken(&lntk,tr->entram);
-            if(DEBUG > 4 && !flag)
-                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
-            if(rand()%100+1 < PAT && flag)
-                {
-                    if(DEBUG > 4)
-                        printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
-                    ativacaotransicao(tr->saem,&lntk);
-                }
-            tr->entram = tr->entram->prox;
+                printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
+            ativacaotransicao(tr->saem,&lntk);
         }
-        tr = tri;
     }
     pthread_exit(0);
 }
@@ -367,39 +362,39 @@ void desenha_estados(BITMAP *buff, int k)
 }
 
 /*void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k , int c)
-{
-    int i, l=0, j=1;
-    float xi,yi,rc,raio;
-    transicaolugar *pl=trans;
-    raio = (Y/8)*(M_PI/(M_PI+k));
-    rc = YCentro - raio*4;
-    raio = (Y/12)*(M_PI/(M_PI+k));
+  {
+  int i, l=0, j=1;
+  float xi,yi,rc,raio;
+  transicaolugar *pl=trans;
+  raio = (Y/8)*(M_PI/(M_PI+k));
+  rc = YCentro - raio*4;
+  raio = (Y/12)*(M_PI/(M_PI+k));
 
-    while(1)
-    {
-        for(i=j;i<c*2;i++)
-        {
-            yi=YCentro+rc*cos((2*M_PI/(k*2))*i);
-            xi=XCentro+rc*sin((2*M_PI/(k*2))*i);
-            line(buff, (xi), (yi)+raio, (xi), (yi)-raio, CORVERMELHO);
-            if(M_PI/2<=(2*M_PI/(k*2))*i && (3*M_PI)/2>(2*M_PI/(k*2))*i)
-                textprintf_ex(buff, font, xi-10, yi-raio-12, CORVERDE, CORPRETO, "Tr%d",l++);
-            else
-            {
-                textprintf_ex(buff, font, xi-10, yi+raio+5, CORVERDE, CORPRETO, "Tr%d",l++);
-                break;
-            }
-            i++;
-        }
-        k = i+2;
-        if(pl->prox!=NULL)
-        {
-            pl=pl->prox;
-        }
-        else
-            break;
-    }
-}*/
+  while(1)
+  {
+  for(i=j;i<c*2;i++)
+  {
+  yi=YCentro+rc*cos((2*M_PI/(k*2))*i);
+  xi=XCentro+rc*sin((2*M_PI/(k*2))*i);
+  line(buff, (xi), (yi)+raio, (xi), (yi)-raio, CORVERMELHO);
+  if(M_PI/2<=(2*M_PI/(k*2))*i && (3*M_PI)/2>(2*M_PI/(k*2))*i)
+  textprintf_ex(buff, font, xi-10, yi-raio-12, CORVERDE, CORPRETO, "Tr%d",l++);
+  else
+  {
+  textprintf_ex(buff, font, xi-10, yi+raio+5, CORVERDE, CORPRETO, "Tr%d",l++);
+  break;
+  }
+  i++;
+  }
+  k = i+2;
+  if(pl->prox!=NULL)
+  {
+  pl=pl->prox;
+  }
+  else
+  break;
+  }
+  }*/
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
