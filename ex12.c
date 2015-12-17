@@ -143,23 +143,23 @@ int main(void)
     i=0;
     //gerar_imagem(*p);
     printf("\n|============INICIO SIMULACAO============|\n");
-    for(i = 0;i < p->al;i++)
+    while(tr != NULL)
     {
-        inserirvari(&d, i);
-        if(pd->prox != NULL)
-            pd = pd->prox;
-        if(pthread_create(&pthread[i], NULL, simupetri, (void *)pd))
+        if(pthread_create(&pthread[i], NULL, simupetri, (void *)tr))
         {
             printf("\nFalha ao criar thread!");
             return -1;
         }
         printf("Pthread[%d]: Criado com Sucesso\n",i);
+        tr = tr->prox;
+        i++;
     }
-    for(i = 0;i < p->al;i++)
+    for(i = 0;i < qt;i++)
     {
         pthread_join(pthread[i],NULL);
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
     }
+
     while(p->lntk != NULL)
     {
         printf("Lugar:%d / tokens:%d\n",p->lntk->lu,p->lntk->tk);
