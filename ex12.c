@@ -33,6 +33,26 @@
 #define DEBUG 5
 #endif
 
+typedef struct st_arco
+{
+    int inicio,tkgp,final;
+    struct st_arco *prox;
+}arco;
+
+typedef struct st_transicao
+{
+    int trans;
+    arco *entram;
+    arco *saem;
+    struct st_transicao *prox;
+
+}transicao;
+
+typedef struct st_lugartoken
+{
+    int lu,tk;
+    struct st_lugartoken *prox;
+}lugartoken;
 
 static struct st_petri *p = NULL;
 void *simupetri(void *i);
@@ -147,42 +167,42 @@ void gerar_imagem(petri *p)
     int k=1,flag;
 
     if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-    exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     set_color_depth(16);
     get_palette(pal);
 
-     buff = create_bitmap(X,Y);
+    buff = create_bitmap(X,Y);
     if(buff == NULL)
     {
-    printf("Nao foi possivel criar a imagem!\n");
-    exit(EXIT_FAILURE);
+        printf("Nao foi possivel criar a imagem!\n");
+        exit(EXIT_FAILURE);
     }
     desenha_estados(buff,p->ql);
     desenha_transicoes(buff, p->tralu,p->ql,p->qt);
 
-        flag=1;
-        while(p->lutra !=NULL)
-        {
-            desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
-            p->lutra=p->lutra->prox;
-            k++;
+    flag=1;
+    while(p->lutra !=NULL)
+    {
+        desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
+        p->lutra=p->lutra->prox;
+        k++;
 
-        }
-        k=1;
-        flag=0;
-        while(p->tralu !=NULL )
-        {
-            desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
-            p->tralu=p->tralu->prox;
-            k++;
-        }
+    }
+    k=1;
+    flag=0;
+    while(p->tralu !=NULL )
+    {
+        desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
+        p->tralu=p->tralu->prox;
+        k++;
+    }
 
     save_bitmap(IMAGENAME, buff, pal);
     destroy_bitmap(buff);
     allegro_exit();
 
     printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-  }
+}
 
 void *simupetri(void *pdtemp)
 {
@@ -465,7 +485,7 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 
     triangle(buff, xt1, yt1, xt2, yt2, xf, yf, CORBRANCO);
     textprintf_ex(buff, font, x2, y2, CORVERDE, CORPRETO, "%d", c);
-      
+
 }
 
 float arctan(float x1, float y1, float x2, float y2)
@@ -477,7 +497,7 @@ float arctan(float x1, float y1, float x2, float y2)
         else
             if(y2>y1)
                 return M_PI/2.0;
-         return 3.0*M_PI/2.0;
+        return 3.0*M_PI/2.0;
     }
     if((y2 == y1) && (x2 < x1))
         return M_PI;
@@ -488,7 +508,7 @@ float arctan(float x1, float y1, float x2, float y2)
         return a + M_PI;
     if((x2 > x1) && (y2 < y1)) // QUAD = 4
         return a + 3.0*M_PI/2.0;
-     return a; // QUAD = 1
+    return a; // QUAD = 1
 }
 
 
