@@ -295,8 +295,32 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
 }
 
 
+void inserirtransicao(transicao **cabeca,int i)
+{
+    transicao *pl = *cabeca;
+    transicao *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(transicao));
+    pl->trans = i;
+    pl->prox = NULL;
+    if(plant != NULL)
+    {
+        printf("corpo\n");
+        plant->prox = pl;
+    }
+    else
+    {
+        printf("cabeça\n");
+        *cabeca = pl;
+    }
 
-void desenha_estados(BITMAP *buff, int k)
+    return;
+}
+oid desenha_estados(BITMAP *buff, int k)
 {
     int i;
     float raio,xi,yi,rc;
