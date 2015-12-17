@@ -214,28 +214,30 @@ void gerar_imagem(petri *p)
     printf("Imagem %s salva com sucesso!\n", IMAGENAME);
 }
 
-void *simupetri(void *pdtemp)
+
+void *simupetri(void *trtemp)
 {
     int k,flag;
-    variavel *pd = (variavel*) pdtemp;
-    petri *ptemp=p;
-    while(ptemp->lutra->li < pd->i)
-        p->lutra = p->lutra->prox;
-    if(DEBUG>0)
-        printf("Pthread[%d]-key:%d\n",ptemp->lutra->li,pd->i);
+    transicao *tri = (transicao*)trtemp;
+    transicao *tr=tri;
+    printf("simupetri:%d\n",tr->trans);
     for(k = 0;k < NMAX;k++)
     {
-        if(DEBUG > 4)
-            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",ptemp->lutra->li,k);
-        flag=retiratoken(&ptemp->lntk,ptemp->lutra->li,ptemp->lutra->tkp);
-        if(DEBUG > 4 && !flag)
-            printf("Nao houve retirada de token\n");
-        if(rand()%100+1 < PAT && flag)
+        while(tr->entram != NULL)
         {
             if(DEBUG > 4)
-                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",ptemp->lutra->key,k);
-            ativacaotransicao(ptemp->tralu,ptemp->lntk,ptemp->lutra->tf);
+                printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
+            flag=retiratoken(&lntk,tr->entram);
+            if(DEBUG > 4 && !flag)
+                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            if(rand()%100+1 < PAT && flag)
+                {
+                    if(DEBUG > 4)
+                        printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
+                    ativacaotransicao(tr->saem,&lntk);
+                }
+            tr->entram = tr->entram->prox;
         }
+        tr = tri;
     }
     pthread_exit(0);
 }
