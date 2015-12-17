@@ -159,13 +159,13 @@ int main(void)
         pthread_join(pthread[i],NULL);
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
     }
-if(DEBUG > 0)
-   while(lntk != NULL)
-           {
-                       printf("Lugar:%d / Tokens Finais:%d\n",lntk->lu,lntk->tk);
-                               lntk=lntk->prox;
-                                   }
-   printf("|============FIM DA SIMULACAO============|\n\n");
+    if(DEBUG > 0)
+        while(lntk != NULL)
+        {
+            printf("Lugar:%d / Tokens Finais:%d\n",lntk->lu,lntk->tk);
+            lntk=lntk->prox;
+        }
+    printf("|============FIM DA SIMULACAO============|\n\n");
     fclose(fl);
     return EXIT_SUCCESS;
 }
@@ -271,20 +271,6 @@ int retiratoken(lugartoken **cabeca, int lu, int tk)
     return 0;
 }
 
-void addtoken(lugartoken **cabeca, int lu, int tk)
-{
-    lugartoken *pl=*cabeca;
-    while(pl!=NULL)
-    {
-        if(pl->lu == lu)
-        {
-            pl->tk+=tk;
-            break;
-        }
-        pl=pl->prox;
-    }
-    return;
-}
 
 void inserirvari(variavel **cabeca,int i)
 {
