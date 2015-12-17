@@ -113,13 +113,20 @@ int main(void)
     for(i = 0;i < qt; i++)
         inserirtransicao(&tr,i);
     trtemp = tr;
-    for(i=0;i<p->al;i++)
+    for(i=0;i<al;i++)
     {
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
         if(DEBUG > 0)
-            printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);
-        inserirlutra(&p->lutra,lu,tk,trans);
+            printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);        
+        if(trtemp->trans == trans)
+                inserirentram(&trtemp->entram,lu,tk,trans);
+        else
+        {
+            trtemp = trtemp->prox;
+            inserirentram(&trtemp->entram,lu,tk,trans);
+        }
     }
+    trtemp = tr;
     for(i=0;i<p->at;i++)
     {
         fscanf(fl,"%d %d %d",&trans,&tk,&lu);
