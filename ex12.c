@@ -33,37 +33,6 @@
 #define DEBUG 5
 #endif
 
-typedef struct st_lugartransicao
-{
-    int li, tf, tkp, key;
-    struct st_lugartransicao *prox;
-}lugartransicao;
-
-typedef struct st_transicaolugar
-{
-    int lf, ti, tkg;
-    struct st_transicaolugar *prox;
-}transicaolugar;
-
-typedef struct st_lugartoken
-{
-    int lu,tk;
-    struct st_lugartoken *prox;
-}lugartoken;
-
-typedef struct st_petri
-{
-    int ql, qt, qk, al, at;
-    lugartoken *lntk;
-    lugartransicao *lutra;
-    transicaolugar *tralu;
-}petri;
-
-typedef struct st_variavel
-{
-    int i;
-    struct st_variavel *prox;
-}variavel;
 
 static struct st_petri *p = NULL;
 void *simupetri(void *i);
@@ -161,6 +130,11 @@ int main(void)
         pthread_join(pthread[i],NULL);
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
     }
+    while(p->lntk != NULL)
+    {
+        printf("Lugar:%d / tokens:%d\n",p->lntk->lu,p->lntk->tk);
+        p->lntk=p->lntk->prox;
+    }
     printf("|============FIM DA SIMULACAO============|\n\n");
     fclose(fl);
     return EXIT_SUCCESS;
@@ -214,22 +188,23 @@ void *simupetri(void *pdtemp)
 {
     int k,flag;
     variavel *pd = (variavel*) pdtemp;
-    while(p->lutra->li < pd->i)
+    petri *ptemp=p;
+    while(ptemp->lutra->li < pd->i)
         p->lutra = p->lutra->prox;
     if(DEBUG>0)
-        printf("Pthread[%d]-key:%d\n",p->lutra->li,pd->i);
+        printf("Pthread[%d]-key:%d\n",ptemp->lutra->li,pd->i);
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
-            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",p->lutra->li,k);
-        flag=retiratoken(&p->lntk,p->lutra->li,p->lutra->tkp);
+            printf("Pthread[%d]//Interacao[%d]:retirada de token\n",ptemp->lutra->li,k);
+        flag=retiratoken(&ptemp->lntk,ptemp->lutra->li,ptemp->lutra->tkp);
         if(DEBUG > 4 && !flag)
             printf("Nao houve retirada de token\n");
         if(rand()%100+1 < PAT && flag)
         {
             if(DEBUG > 4)
-                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",p->lutra->key,k);
-            ativacaotransicao(p->tralu,p->lntk,p->lutra->tf);
+                printf("Pthread[%d]//Interacao[%d]:Transicao Ativada com Sucesso\n",ptemp->lutra->key,k);
+            ativacaotransicao(ptemp->tralu,ptemp->lntk,ptemp->lutra->tf);
         }
     }
     pthread_exit(0);
@@ -372,7 +347,7 @@ void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
     return;
 }
 
-void desenha_estados(BITMAP buff, int k)
+void desenha_estados(BITMAP *buff, int k)
 {
     int i;
     float raio,xi,yi,rc;
@@ -385,7 +360,7 @@ void desenha_estados(BITMAP buff, int k)
         yi=YCentro+rc*cos((2*M_PI/k)*i);
         xi=XCentro+rc*sin((2*M_PI/k)*i);
         circle(buff, xi, yi, raio, CORAZUL);
-        textprintf_ex(buff, funt, (xi-18), (yi-5), CORVERDE, CORPRETO, "Est %d",i);
+        textprintf_ex(buff, font, (xi-18), (yi-5), CORVERDE, CORPRETO, "Est %d",i);
     }
     return;
 }
