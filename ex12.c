@@ -55,15 +55,12 @@ typedef struct st_lugartoken
 }lugartoken;
 
 static struct st_lugartoken *lntk;
-void *simupetri(void *i);
+void *simupetri(void *trtemp);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
-void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans);
-void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu);
-void inserirvari(variavel **cabeca,int i);
-void ativacaotransicao(transicaolugar *cabeca,lugartoken *pt,int ti);
-int retiratoken(lugartoken **cabeca, int lu, int tk);
-void addtoken(lugartoken **cabeca, int lu, int tk);
-void adicionai(petri **cabeca,int i);
+void inserirtransicao(transicao **cabeca, int i);
+void inserirentram(arco **cabeca,int inicio,int tkgp,int final);
+void ativacaotransicao(arco *head,lugartoken **cabeca);
+int retiratoken(lugartoken **cabeca, arco *head);
 void gerar_imagem(petri *p);
 void desenha_estados(BITMAP *buff, int k);
 void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k, int c);
