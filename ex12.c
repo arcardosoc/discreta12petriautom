@@ -272,25 +272,6 @@ int retiratoken(lugartoken **cabeca, int lu, int tk)
 }
 
 
-void inserirvari(variavel **cabeca,int i)
-{
-    variavel *pl = *cabeca;
-    variavel *plant = NULL;
-    while(pl != NULL)
-    {
-        plant = pl;
-        pl = pl->prox;
-    }
-    pl = malloc(sizeof(variavel));
-    pl->i = i;
-    pl->prox = NULL;
-    if(plant != NULL)
-        plant->prox = pl;
-    else
-        *cabeca = pl;
-
-    return;
-}
 
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
