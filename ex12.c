@@ -262,20 +262,23 @@ void ativacaotransiicao(arco *head,lugartoken **cabeca)
     }
     return ;
 }
-retiratoken(lugartoken **cabeca, int lu, int tk)
+int retiratoken(lugartoken **cabeca, arco *head)
 {
     lugartoken *pl=*cabeca;
-    while(pl!=NULL)
+    arco *pt=head;
+    while(pl != NULL)
     {
-        if(pl->lu == lu && pl->tk >= tk)
+        if(pt->inicio == pl->lu && pl->tk >= pt->tkgp)
         {
-            pl->tk-=tk;
+            printf("pt->inicio:%d = pl->lu:%d\npl->tk:%d - pt->tkgp:%d\n",pt->inicio,pl->lu,pl->tk,pt->tkgp);
+            pl->tk-=pt->tkgp;
             return 1;
         }
-        pl=pl->prox;
+        pl = pl->prox;
     }
     return 0;
 }
+
 
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
@@ -326,7 +329,31 @@ void inserirtransicao(transicao **cabeca,int i)
 
     return;
 }
-oid desenha_estados(BITMAP *buff, int k)
+void inserirentram(arco **cabeca,int inicio,int tkgp,int final)
+{
+    arco *pl = *cabeca;
+    arco *plant = NULL;
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl->prox;
+    }
+    pl = malloc(sizeof(arco));
+    pl->inicio = inicio;
+    pl->tkgp = tkgp;
+    pl->final = final;
+    if(DEBUG > 2)
+        printf("Pl->inicio:%d\nPl->tkgp:%d\nPl->final:%d\n",pl->inicio,pl->tkgp,pl->final);
+    pl->prox = NULL;
+    if(plant != NULL)
+        plant->prox = pl;
+    else
+        *cabeca = pl;
+
+    return;
+}
+
+void desenha_estados(BITMAP *buff, int k)
 {
     int i;
     float raio,xi,yi,rc;
