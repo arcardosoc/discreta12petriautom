@@ -119,7 +119,7 @@ int main(void)
         if(DEBUG > 0)
             printf("Lugar:%d---Tokens Perdidos:%d--->Transicao:%d\n",lu,tk,trans);        
         if(trtemp->trans == trans)
-                inserirentram(&trtemp->entram,lu,tk,trans);
+            inserirentram(&trtemp->entram,lu,tk,trans);
         else
         {
             trtemp = trtemp->prox;
@@ -127,13 +127,20 @@ int main(void)
         }
     }
     trtemp = tr;
-    for(i=0;i<p->at;i++)
+    for(i=0;i < at;i++)
     {
         fscanf(fl,"%d %d %d",&trans,&tk,&lu);
         if(DEBUG > 0)
             printf("Transicao:%d---Tokens Ganhos:%d--->Lugar:%d\n",trans,tk,lu);
-        inserirtralu(&p->tralu,trans,tk,lu);
+        if(trtemp->trans == trans)
+            inserirentram(&trtemp->saem,trans,tk,lu);
+        else
+        {
+            trtemp = trtemp->prox;
+            inserirentram(&trtemp->saem,trans,tk,lu);
+        }
     }
+    i=0;
     //gerar_imagem(*p);
     printf("\n|============INICIO SIMULACAO============|\n");
     for(i = 0;i < p->al;i++)
