@@ -81,36 +81,38 @@ int main(void)
     fscanf(fl,"%d",&al);
     fscanf(fl,"%d",&at);
     printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\nQuantidade de Lugares com Tokens:%d\nQuantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",ql,qt,qk,al,at);
-
-    for(i = 0;i < p->qk;i++)
+    for(i = 0;i < qk;i++)
     {
         fscanf(fl,"%d %d",&lu,&tk);
-        for(trans = k; trans < p->ql ;trans++)
+        for(trans = k; trans < ql ;trans++)
         {
             if(trans == lu)
             {
                 if(DEBUG > 0)
                     printf("Lugar:%d/Tokens:%d\n",lu,tk);
-                inserirlutk(&p->lntk,lu,tk);
+                inserirlutk(&lntk,lu,tk);
                 break;
             }
             else
             {
                 if(DEBUG > 0)
                     printf("Lugar:%d/Tokens:0\n",trans);
-                inserirlutk(&p->lntk,trans,VAZIO);
+                inserirlutk(&lntk,trans,VAZIO);
             }
         }
         k = trans+1;
 
     }
-    if(k < p->ql)
-        for(i = k;i < p->ql; i++)
+    if(k < ql)
+        for(i = k;i < ql; i++)
         {
             if(DEBUG > 0)
                 printf("Lugar:%d/Tokens:0\n",i);
-            inserirlutk(&p->lntk,i,VAZIO);
+            inserirlutk(&lntk,i,VAZIO);
         }
+    for(i = 0;i < qt; i++)
+        inserirtransicao(&tr,i);
+    trtemp = tr;
     for(i=0;i<p->al;i++)
     {
         fscanf(fl,"%d %d %d",&lu,&tk,&trans);
