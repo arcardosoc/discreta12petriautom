@@ -69,22 +69,19 @@ float arctan(float x1, float y1, float x2, float y2);
 
 int main(void)
 {
-    int i,k=0,lu,trans,tk;
+    int i=0,k=0,lu,trans,tk,ql, qt, qk, al, at;
     FILE *fl= fopen(FNAME,"r+");
+    transicao *tr = NULL;
+    transicao *trtemp= NULL;
     pthread_t pthread[NMAX];
-    variavel *d = malloc(sizeof(variavel));
-    variavel *pd = d;
-    p = malloc(sizeof(petri));
     srand(time(NULL));
-    p->lntk  = NULL;
-    p->lutra = NULL;
-    p->tralu = NULL;
-    fscanf(fl,"%d",&(p->ql));
-    fscanf(fl,"%d",&(p->qt));
-    fscanf(fl,"%d",&(p->qk));
-    fscanf(fl,"%d",&(p->al));
-    fscanf(fl,"%d",&(p->at));
-    printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\nQuantidade de Lugares com Tokens:%d\nQuantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",p->ql,p->qt,p->qk,p->al,p->at);
+    fscanf(fl,"%d",&ql);
+    fscanf(fl,"%d",&qt);
+    fscanf(fl,"%d",&qk);
+    fscanf(fl,"%d",&al);
+    fscanf(fl,"%d",&at);
+    printf("Quantidade de Lugares:%d\nQuantidade de Transicoes:%d\nQuantidade de Lugares com Tokens:%d\nQuantidade de Arcos Lugares:%d\nQuantidade de Arcos Transicoes:%d\n",ql,qt,qk,al,at);
+
     for(i = 0;i < p->qk;i++)
     {
         fscanf(fl,"%d %d",&lu,&tk);
