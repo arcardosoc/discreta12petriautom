@@ -295,29 +295,6 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
 }
 
 
-void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
-{
-    transicaolugar *pl = *cabeca;
-    transicaolugar *plant = NULL;
-    while(pl != NULL)
-    {
-        plant = pl;
-        pl = pl->prox;
-    }
-    pl = malloc(sizeof(transicaolugar));
-    pl->ti = trans;
-    pl->tkg = tk;
-    pl->lf = lu;
-    if(DEBUG > 2)
-        printf("Pl->ti:%d\nPl->tkg:%d\nPl->lf:%d\n",pl->ti,pl->tkg,pl->lf);
-    pl->prox = NULL;
-    if(plant != NULL)
-        plant->prox = pl;
-    else
-        *cabeca = pl;
-
-    return;
-}
 
 void desenha_estados(BITMAP *buff, int k)
 {
