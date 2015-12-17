@@ -271,8 +271,6 @@ int retiratoken(lugartoken **cabeca, int lu, int tk)
     return 0;
 }
 
-
-
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
     lugartoken *pl = *cabeca;
@@ -296,29 +294,6 @@ void inserirlutk(lugartoken **cabeca,int lu,int tk)
     return;
 }
 
-void inserirlutra(lugartransicao **cabeca,int lu,int tk,int trans)
-{
-    lugartransicao *pl = *cabeca;
-    lugartransicao *plant = NULL;
-    while(pl != NULL)
-    {
-        plant = pl;
-        pl = pl->prox;
-    }
-    pl = malloc(sizeof(lugartransicao));
-    pl->li = lu ;
-    pl->tkp = tk;
-    pl->tf = trans;
-    if(DEBUG > 2)
-        printf("Pl->li:%d\nPl->tkp:%d\nPl->tf:%d\n",pl->li,pl->tkp,pl->tf);
-    pl->prox = NULL;
-    if(plant != NULL)
-        plant->prox = pl;
-    else
-        *cabeca = pl;
-
-    return;
-}
 
 void inserirtralu(transicaolugar **cabeca,int trans,int tk,int lu)
 {
