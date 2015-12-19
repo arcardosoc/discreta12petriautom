@@ -151,7 +151,7 @@ int main(void)
         }
     }
     i=0;
-    //gerar_imagem(*p);
+    gerar_imagem(tr, ql , qt);
     printf("\n|============INICIO SIMULACAO============|\n");
     while(tr != NULL)
     {
@@ -186,49 +186,57 @@ int main(void)
     return EXIT_SUCCESS;
 }
 
-/*void gerar_imagem(petri *p)
-  { 
-  BITMAP *buff;
-  PALETTE pal;
-  int k=1,flag;
+void gerar_imagem(transicao *tr, int ql, int qt)
+{ 
+    BITMAP *buff;
+    PALETTE pal;
+    arco *pt = tr->entram;
+    arco *pl = tr->saem;
+    int k=1,flag;
 
-  if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
-  exit(EXIT_FAILURE);
-  set_color_depth(16);
-  get_palette(pal);
+    if(install_allegro(SYSTEM_NONE, &errno, atexit) !=0)
+        exit(EXIT_FAILURE);
+    set_color_depth(16);
+    get_palette(pal);
 
-  buff = create_bitmap(X,Y);
-  if(buff == NULL)
-  {
-  printf("Nao foi possivel criar a imagem!\n");
-  exit(EXIT_FAILURE);
-  }
-  desenha_estados(buff,p->ql);
-  desenha_transicoes(buff, p->tralu,p->ql,p->qt);
+    buff = create_bitmap(X,Y);
+    if(buff == NULL)
+    {
+        printf("Nao foi possivel criar a imagem!\n");
+        exit(EXIT_FAILURE);
+    }
+    desenha_estados(buff,ql);
+    desenha_transicoes(buff, tr, ql, qt);
 
-  flag=1;
-  while(p->lutra !=NULL)
-  {
-  desenha_arcos(p->lutra->li*2,p->lutra->tf+k,buff,p->ql*2,p->lutra->tkp,flag);
-  p->lutra=p->lutra->prox;
-  k++;
 
-  }
-  k=1;
-  flag=0;
-  while(p->tralu !=NULL )
-  {
-  desenha_arcos(p->tralu->ti+k,p->tralu->lf*2,buff,p->ql*2,p->tralu->tkg,flag);
-  p->tralu=p->tralu->prox;
-  k++;
-  }
+    while(1)
+    {
+        flag=1;
+        while(pt !=NULL)
+        {
+            desenha_arcos(pt->inicio*2,pt->final+k,buff,ql*2,pt->tkgp,flag);
+            pt = pt->prox;
+        }
+        flag=0;
+        while(pl !=NULL )
+        {
+            desenha_arcos(pl->inicio+k,pl->final*2,buff,ql*2,pl->tkgp,flag);
+            pl = pl->prox;
+        }
+        k++;
+        tr = tr->prox;
+        if(tr == NULL)
+            break;
+        pt = tr->entram;
+        pl = tr->saem;
 
-  save_bitmap(IMAGENAME, buff, pal);
-  destroy_bitmap(buff);
-  allegro_exit();
+    }
+    save_bitmap(IMAGENAME, buff, pal);
+    destroy_bitmap(buff);
+    allegro_exit();
 
-  printf("Imagem %s salva com sucesso!\n", IMAGENAME);
-  }*/
+    printf("Imagem %s salva com sucesso!\n", IMAGENAME);
+}
 
 
 void *simupetri(void *trtemp)
@@ -238,17 +246,17 @@ void *simupetri(void *trtemp)
     printf("simupetri:%d\n",tr->trans);
     for(k = 0;k < NMAX;k++)
     {
+        if(DEBUG > 4)
+            printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
+        flag=retiratoken(&lntk,tr->entram);
+        if(DEBUG > 4 && !flag)
+            printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
+        if(rand()%100+1 < PAT && flag)
+        {
             if(DEBUG > 4)
-                printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
-            flag=retiratoken(&lntk,tr->entram);
-            if(DEBUG > 4 && !flag)
-                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
-            if(rand()%100+1 < PAT && flag)
-            {
-                if(DEBUG > 4)
-                    printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
-                ativacaotransicao(tr->saem,&lntk);
-            }
+                printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
+            ativacaotransicao(tr->saem,&lntk);
+        }
     }
     pthread_exit(0);
 }
