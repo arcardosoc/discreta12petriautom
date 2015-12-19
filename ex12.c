@@ -67,7 +67,7 @@ void inserirtransicao(transicao **cabeca, int i);
 void inserirentram(arco **cabeca,int inicio,int tkgp,int final);
 void inserirpthread(thread **cabeca, pthread_t p);
 void ativacaotransicao(arco *head,lugartoken **cabeca);
-int retiratoken(lugartoken **cabeca, arco *head);
+int retiratoken(lugartoken **cabeca, arco *head,arco *kopf);
 void gerar_imagem()nsicao *tr,int ql, int qt;
 void desenha_estados(BITMAP *buff, int k);
 void desenha_transicoes(BITMAP *buff, transicao *trans, int k, int c);
@@ -241,64 +241,16 @@ void gerar_imagem(transicao *tr, int ql, int qt)
 
 void *simupetri(void *trtemp)
 {
-    int k,flag;
+    int k;
     transicao *tr = (transicao*)trtemp;
-    printf("simupetri:%d\n",tr->trans);
     for(k = 0;k < NMAX;k++)
     {
         if(DEBUG > 4)
             printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
-        flag=retiratoken(&lntk,tr->entram);
-        if(DEBUG > 4 && !flag)
-            printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
-        if(rand()%100+1 < PAT && flag)
-        {
-            if(DEBUG > 4)
-                printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
-            ativacaotransicao(tr->saem,&lntk);
-        }
+        retiratoken(&lntk,tr->entram,tr->saem);
     }
     pthread_exit(0);
 }
-
-void ativacaotransicao(arco *head,lugartoken **cabeca)
-{
-    lugartoken *pl=*cabeca;
-    arco *pt=head;
-    while(pt != NULL)
-    {
-        while(pl != NULL)
-        {
-            if(pt->final== pl->lu)
-            {
-                printf("pt->final:%d = pl->lu:%d\npl->tk:%d + pt->tkgp:%d\n",pt->final,pl->lu,pl->tk,pt->tkgp);
-                pl->tk+=pt->tkgp;
-            }
-            pl = pl->prox;
-        }
-        pl=*cabeca;
-        pt=pt->prox;
-    }
-    return ;
-}
-
-int retiratoken(lugartoken **cabeca, arco *head)
-{
-    lugartoken *pl=*cabeca;
-    arco *pt=head;
-    while(pl != NULL)
-    {
-        if(pt->inicio == pl->lu && pl->tk >= pt->tkgp)
-        {
-            printf("pt->inicio:%d = pl->lu:%d\npl->tk:%d - pt->tkgp:%d\n",pt->inicio,pl->lu,pl->tk,pt->tkgp);
-            pl->tk-=pt->tkgp;
-            return 1;
-        }
-        pl = pl->prox;
-    }
-    return 0;
-}
-
 
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
