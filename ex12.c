@@ -162,10 +162,12 @@ int main(void)
         tr = tr->prox;
         inserirpthread(&lthr,thrtemp);
     }
-    for(i = 0;i < qt;i++)
+    while(lthr != NULL)
     {
+        thrtemp = lthr->thr;
         pthread_join(pthread[i],NULL);
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
+        lthr = lthr->prox;
     }
     if(DEBUG > 0)
         while(lntk != NULL)
