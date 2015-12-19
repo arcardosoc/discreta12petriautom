@@ -429,7 +429,7 @@ void desenha_transicoes(BITMAP *buff, transicao *trans, int k , int c)
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
-    float delta, alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
+    float si,co,delta, alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
     raio=(Y/8)*(M_PI/(M_PI+(k/2)));
     rc = YCentro - raio*4;
 
@@ -446,10 +446,21 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     {
         beta=arctan(x3,y3,x2,y2);
         phi=arctan(x1,y1,x2,y2);
-        xo = x1 + raio * cos(phi);
-        yo = y1 + raio * sin(phi);
-        xf = x3 + raio * cos(beta);
-        yf = y3 + raio * sin(beta);
+        if(flag)
+        {
+            xo = x1 + raio * cos(phi);
+            yo = y1 + raio * sin(phi);
+            xf = x3;
+            yf = y3;
+        }
+        else
+        {
+            xo = x1;
+            yo = y1;
+            xf = x3 + raio * cos(beta);
+            yf = y3 + raio * sin(beta);
+        }
+
     }
     else
     {
@@ -483,14 +494,13 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     coo[6] = (int)xf;
     coo[7] = (int)yf;
     spline(buff,coo,CORBRANCO);
-
-    delta=arctan(x2,y2,x3,y3);
-    xt2 = xf - (raio / 4) * (sin(delta) + cos(delta));
-    yt2 = yf + (raio / 4) * (sin(delta) - cos(delta));
-    xt1 = xf + (raio / 4) * (sin(delta) - cos(delta));
-    yt1 = yf - (raio / 4) * (sin(delta) + cos(delta));
-
-    triangle(buff, xt1, yt1, xt2, yt2, xf, yf, CORBRANCO);
+    si=lsin(x2,y2,xf,yf);
+    co=lcos(x2,y2,xf,yf);
+    xt1 = xf - (raio / 4) * (si + co);
+    yt1 = yf + (raio / 4) * (co - si);
+    xt2 = xf + (raio / 4) * (si - co);
+    yt2 = yf - (raio / 4) * (si + co);
+    triangle(buff, xf, yf, xt1, yt1, xt2, yt2, CORBRANCO);
     textprintf_ex(buff, font, x2, y2, CORVERDE, CORPRETO, "%d", c);
 
 }
