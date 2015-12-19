@@ -273,6 +273,37 @@ void ativacaotransicao(arco *head,lugartoken **cabeca)
     return ;
 }
 
+void retiratoken(lugartoken **cabeca, arco *head, arco *kopf)
+{
+    lugartoken *pl=*cabeca;
+    arco *pt=head;
+    while(pt != NULL)
+    {
+        while(pl != NULL)
+        {
+            if(pt->inicio == pl->lu && pl->tk >= pt->tkgp)
+            {
+                if(DEBUG > 4 )
+                    printf("Pthread[%d]:\nHouve retirada de token\n\n",pt->final);
+                printf("pt->inicio:%d = pl->lu:%d\npl->tk:%d - pt->tkgp:%d\n",pt->inicio,pl->lu,pl->tk,pt->tkgp);
+                pl->tk-=pt->tkgp;
+                if(rand()%100+1 < PAT)
+                {
+                    if(DEBUG > 4)
+                        printf("Pthread[%d]:\nTransicao Ativada com Sucesso\n\n",pt->final);
+                    ativacaotransicao(kopf,&lntk);
+                }
+            }
+            if(DEBUG > 4 && pt->inicio == pl->lu && pl->tk > pt->tkgp)
+                printf("Pthread[%d]:\nNao houve retirada de token\n\n",pt->final);
+            pl = pl->prox;
+        }
+        pl=*cabeca;
+        pt=pt->prox;
+    }
+    return ;
+}
+
 
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
