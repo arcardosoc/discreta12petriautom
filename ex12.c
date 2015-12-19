@@ -65,6 +65,7 @@ void *simupetri(void *trtemp);
 void inserirlutk(lugartoken **cabeca,int lu,int tk);
 void inserirtransicao(transicao **cabeca, int i);
 void inserirentram(arco **cabeca,int inicio,int tkgp,int final);
+void inserirpthread(thread **cabeca, pthread_t p);
 void ativacaotransicao(arco *head,lugartoken **cabeca);
 int retiratoken(lugartoken **cabeca, arco *head);
 //void gerar_imagem(petri *p);
