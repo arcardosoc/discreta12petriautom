@@ -72,6 +72,8 @@ int retiratoken(lugartoken **cabeca, arco *head);
 void desenha_estados(BITMAP *buff, int k);
 //void desenha_transicoes(BITMAP *buff, transicaolugar *trans, int k, int c);
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag);
+float asin(float x1, float y1, float x2, float y2);
+float acos(float x1, float y1, float x2, float y2);
 float arctan(float x1, float y1, float x2, float y2);
 
 int main(void)
@@ -232,22 +234,21 @@ int main(void)
 void *simupetri(void *trtemp)
 {
     int k,flag;
-    transicao *tri = (transicao*)trtemp;
-    transicao *tr=tri;
+    transicao *tr = (transicao*)trtemp;
     printf("simupetri:%d\n",tr->trans);
     for(k = 0;k < NMAX;k++)
     {
-        if(DEBUG > 4)
-            printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
-        flag=retiratoken(&lntk,tr->entram);
-        if(DEBUG > 4 && !flag)
-            printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
-        if(rand()%100+1 < PAT && flag)
-        {
             if(DEBUG > 4)
-                printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
-            ativacaotransicao(tr->saem,&lntk);
-        }
+                printf("Pthread[%d]:\nInteracao[%d]:retirada de token\n\n",tr->trans,k);
+            flag=retiratoken(&lntk,tr->entram);
+            if(DEBUG > 4 && !flag)
+                printf("Pthread[%d]:\nNao houve retirada de token\n\n",tr->trans);            
+            if(rand()%100+1 < PAT && flag)
+            {
+                if(DEBUG > 4)
+                    printf("Pthread[%d]:\nInteracao[%d]:Transicao Ativada com Sucesso\n\n",tr->trans,k);
+                ativacaotransicao(tr->saem,&lntk);
+            }
     }
     pthread_exit(0);
 }
@@ -272,6 +273,7 @@ void ativacaotransicao(arco *head,lugartoken **cabeca)
     }
     return ;
 }
+
 int retiratoken(lugartoken **cabeca, arco *head)
 {
     lugartoken *pl=*cabeca;
