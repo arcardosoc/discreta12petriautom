@@ -165,7 +165,11 @@ int main(void)
     while(lthr != NULL)
     {
         thrtemp = lthr->thr;
-        pthread_join(thrtemp,NULL);
+        if(pthread_join(thrtemp,NULL))
+        {
+            printf("\nFalha ao fechar thread!\n");
+            return -1;
+        }
         printf("Pthread[%d]: Fechado com Sucesso\n",i);
         lthr = lthr->prox;
     }
