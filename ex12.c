@@ -252,6 +252,28 @@ void *simupetri(void *trtemp)
     pthread_exit(0);
 }
 
+void ativacaotransicao(arco *head,lugartoken **cabeca)
+{
+    lugartoken *pl=*cabeca;
+    arco *pt=head;
+    while(pt != NULL)
+    {
+        while(pl != NULL)
+        {
+            if(pt->final== pl->lu)
+            {
+                printf("pt->final:%d = pl->lu:%d\npl->tk:%d + pt->tkgp:%d\n",pt->final,pl->lu,pl->tk,pt->tkgp);
+                pl->tk+=pt->tkgp;
+            }
+            pl = pl->prox;
+        }
+        pl=*cabeca;
+        pt=pt->prox;
+    }
+    return ;
+}
+
+
 void inserirlutk(lugartoken **cabeca,int lu,int tk)
 {
     lugartoken *pl = *cabeca;
