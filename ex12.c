@@ -508,10 +508,18 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 
 float acos(float x1, float y1, float x2, float y2)
 {
-        if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
-                    return ~0;
-            return ((x2-x1)/sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
+    if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
+        return ~0;
+    return ((x2-x1)/sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
 }
+
+float asin(float x1, float y1, float x2, float y2)
+{
+    if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
+        return ~0;
+    return ((y2-y1)/sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
+}
+
 
 float arctan(float x1, float y1, float x2, float y2)
 {
