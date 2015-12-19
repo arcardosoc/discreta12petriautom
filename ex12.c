@@ -33,6 +33,12 @@
 #define DEBUG 5
 #endif
 
+typedef struct st_thread
+{
+        pthread_t thr;
+            struct st_thread *prox;
+}thread;
+
 typedef struct st_arco
 {
     int inicio,tkgp,final;
