@@ -494,8 +494,8 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     coo[6] = (int)xf;
     coo[7] = (int)yf;
     spline(buff,coo,CORBRANCO);
-    si=lsin(x2,y2,xf,yf);
-    co=lcos(x2,y2,xf,yf);
+    si=asin(x2,y2,xf,yf);
+    co=acos(x2,y2,xf,yf);
     xt1 = xf - (raio / 4) * (si + co);
     yt1 = yf + (raio / 4) * (co - si);
     xt2 = xf + (raio / 4) * (si - co);
@@ -503,6 +503,14 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     triangle(buff, xf, yf, xt1, yt1, xt2, yt2, CORBRANCO);
     textprintf_ex(buff, font, x2, y2, CORVERDE, CORPRETO, "%d", c);
 
+    return;
+}
+
+float acos(float x1, float y1, float x2, float y2)
+{
+        if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
+                    return ~0;
+            return ((x2-x1)/sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
 }
 
 float arctan(float x1, float y1, float x2, float y2)
