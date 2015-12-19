@@ -35,8 +35,8 @@
 
 typedef struct st_thread
 {
-        pthread_t thr;
-            struct st_thread *prox;
+    pthread_t thr;
+    struct st_thread *prox;
 }thread;
 
 typedef struct st_arco
@@ -80,7 +80,8 @@ int main(void)
     FILE *fl= fopen(FNAME,"r+");
     transicao *tr = NULL;
     transicao *trtemp= NULL;
-    pthread_t pthread[NMAX];
+    thread *lthr = NULL;
+    pthread_t thrtemp;
     srand(time(NULL));
     fscanf(fl,"%d",&ql);
     fscanf(fl,"%d",&qt);
