@@ -153,7 +153,7 @@ int main(void)
     printf("\n|============INICIO SIMULACAO============|\n");
     while(tr != NULL)
     {
-        if(pthread_create(&thrtemp NULL, simupetri, (void *)tr))
+        if(pthread_create(&thrtemp,NULL, simupetri, (void *)tr))
         {
             printf("\nFalha ao criar thread!");
             return -1;
