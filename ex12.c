@@ -495,4 +495,24 @@ float arctan(float x1, float y1, float x2, float y2)
     return a; // QUAD = 1
 }
 
+void inserirpthread(thread **cabeca, pthread_t p)
+{
+    thread *pl = *cabeca;
+    thread *plant = NULL;
+
+    while(pl != NULL)
+    {
+        plant = pl;
+        pl = pl -> prox;
+    }
+
+    pl = malloc(sizeof(thread));
+    pl -> thr = p;
+    pl -> prox = NULL;
+
+    if(plant != NULL)
+        plant -> prox = pl;
+    else
+        *cabeca = pl;
+}
 
