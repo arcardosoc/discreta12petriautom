@@ -30,7 +30,7 @@
 #endif
 
 #ifndef DEBUG
-#define DEBUG 5
+#define DEBUG 0
 #endif
 
 typedef struct st_thread
@@ -67,13 +67,13 @@ void inserirtransicao(transicao **cabeca, int i);
 void inserirentram(arco **cabeca,int inicio,int tkgp,int final);
 void inserirpthread(thread **cabeca, pthread_t p);
 void ativacaotransicao(arco *head,lugartoken **cabeca);
-int retiratoken(lugartoken **cabeca, arco *head,arco *kopf);
-void gerar_imagem()nsicao *tr,int ql, int qt;
+void retiratoken(lugartoken **cabeca, arco *head,arco *kopf);
+void gerar_imagem(transicao *tr,int ql, int qt);
 void desenha_estados(BITMAP *buff, int k);
 void desenha_transicoes(BITMAP *buff, transicao *trans, int k, int c);
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag);
-float asin(float x1, float y1, float x2, float y2);
-float acos(float x1, float y1, float x2, float y2);
+float alsin(float x1, float y1, float x2, float y2);
+float alcos(float x1, float y1, float x2, float y2);
 float arctan(float x1, float y1, float x2, float y2);
 
 int main(void)
@@ -160,7 +160,6 @@ int main(void)
             printf("\nFalha ao criar thread!");
             return -1;
         }
-        printf("Pthread[%d]: Criado com Sucesso\n",i);
         tr = tr->prox;
         inserirpthread(&lthr,thrtemp);
     }
@@ -172,7 +171,6 @@ int main(void)
             printf("\nFalha ao fechar thread!\n");
             return -1;
         }
-        printf("Pthread[%d]: Fechado com Sucesso\n",i);
         lthr = lthr->prox;
     }
     if(DEBUG > 0)
@@ -395,7 +393,7 @@ void desenha_transicoes(BITMAP *buff, transicao *trans, int k , int c)
 {
     int i, l=0, j=1;
     float xi,yi,rc,raio;
-    transicaolugar *pl=trans;
+    transicao *pl=trans;
     raio = (Y/8)*(M_PI/(M_PI+k));
     rc = YCentro - raio*4;
     raio = (Y/12)*(M_PI/(M_PI+k));
@@ -429,7 +427,7 @@ void desenha_transicoes(BITMAP *buff, transicao *trans, int k , int c)
 
 void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
 {
-    float si,co,delta, alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
+    float si,co,alfa, beta, phi, x1, y1, x2, y2, x3, y3, xo, yo, xf, yf, raio, xt1, yt1, xt2, yt2, rc;
     raio=(Y/8)*(M_PI/(M_PI+(k/2)));
     rc = YCentro - raio*4;
 
@@ -494,8 +492,8 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     coo[6] = (int)xf;
     coo[7] = (int)yf;
     spline(buff,coo,CORBRANCO);
-    si=asin(x2,y2,xf,yf);
-    co=acos(x2,y2,xf,yf);
+    si=alsin(x2,y2,xf,yf);
+    co=alcos(x2,y2,xf,yf);
     xt1 = xf - (raio / 4) * (si + co);
     yt1 = yf + (raio / 4) * (co - si);
     xt2 = xf + (raio / 4) * (si - co);
@@ -506,14 +504,14 @@ void desenha_arcos(int qo, int qf, BITMAP *buff, int k, int c, int flag)
     return;
 }
 
-float acos(float x1, float y1, float x2, float y2)
+float alcos(float x1, float y1, float x2, float y2)
 {
     if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
         return ~0;
     return ((x2-x1)/sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)));
 }
 
-float asin(float x1, float y1, float x2, float y2)
+float alsin(float x1, float y1, float x2, float y2)
 {
     if(x1==0 && x2 == 0 && y1 == 0 && y2 == 0)
         return ~0;
