@@ -34,13 +34,13 @@
  */
 
 /**
-* \file ex12.c
-* \brief simulador de rede de petri
-* \author Arthur Carvalho de Albuquerque Cardoso <<arthurcardoso2005@hotmail.com>>
-* \author Mateus Lenier Rezende <<mateuslenier@gmail.com>>
-* \version 2.0
-* \date 2015-12-20
-*/
+ * \file ex12.c
+ * \brief simulador de rede de petri
+ * \author Arthur Carvalho de Albuquerque Cardoso <<arthurcardoso2005@hotmail.com>>
+ * \author Mateus Lenier Rezende <<mateuslenier@gmail.com>>
+ * \version 2.0
+ * \date 2015-12-20
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -203,6 +203,8 @@ int main(void)
             printf("\nFalha ao criar thread!");
             return -1;
         }
+        if(DEBUG == 0)
+            printf("Pthread criada com Sucesso!\n");
         tr = tr->prox; /** Método utilizado para transitar pela lista transição. */
         inserirpthread(&lthr,thrtemp); /** Chamada para a função inserirpthread. */
     }
@@ -214,6 +216,8 @@ int main(void)
             printf("\nFalha ao fechar thread!\n");
             return -1;
         }
+        if(DEBUG == 0)
+            printf("Pthread fechada com Sucesso!\n");
         lthr = lthr->prox; /** Método utilizado para transitar pela lista lthr. */
     }
     if(DEBUG > 0)
@@ -303,8 +307,9 @@ void ativacaotransicao(arco *head,lugartoken **cabeca) /** Função que simula a
         {
             if(pt->final== pl->lu) /** Condição de igualdade entre lugar final do arco transição-lugar e lugar da lista lugartoken. */
             {
-                    printf("pt->final:%d = pl->lu:%d\npl->tk:%d + pt->tkgp:%d\n",pt->final,pl->lu,pl->tk,pt->tkgp);
-                    pl->tk+=pt->tkgp; /** Adição do numero de tokens de acordo com o numero de tokens ganhos com o arco transição-lugar. */
+                if(DEBUG > 1)
+                    printf("pt->final:%d = pl->lu:%d\npl->tk:%d + pt->tkgp:%d\n",pt->final,pl->lu,pl->tk,pt->tkgp); /** Adição do numero de tokens de acordo com o numero de tokens ganhos com o arco transição-lugar. */
+                pl->tk+=pt->tkgp; /** Adição do numero de tokens de acordo com o numero de tokens ganhos com o arco transição-lugar. */
             }
             pl = pl->prox; /** Método utilizado para transitar pela lista lugartoken. */
         }
@@ -326,7 +331,8 @@ void retiratoken(lugartoken **cabeca, arco *head, arco *kopf)
             {
                 if(DEBUG > 4 )
                     printf("Pthread[%d]:\nHouve retirada de token\n\n",pt->final);
-                printf("pt->inicio:%d = pl->lu:%d\npl->tk:%d - pt->tkgp:%d\n",pt->inicio,pl->lu,pl->tk,pt->tkgp);
+                if(DEBUG > 1)
+                    printf("pt->inicio:%d = pl->lu:%d\npl->tk:%d - pt->tkgp:%d\n",pt->inicio,pl->lu,pl->tk,pt->tkgp);
                 pl->tk-=pt->tkgp; /** Subtração do numero de tokens de acordo com o numero de tokens pedidos pelo arco lugar-transição. */
                 if(rand()%100+1 < PAT) /** Condição de ativação da transição, 50% de chance de ativação. */
                 {
